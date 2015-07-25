@@ -6,13 +6,16 @@
     "koa-route": "",
     "koa-bodyparser": "",
     "supertest": "",
-    "restler": ""
+    "restler": "",
+    "amqplib": "",
+    "bunyan": ""
   },
   "devDependencies": {
     "unit.js": "",
     "mocha": "",
     "co-mocha": "",
-    "nock": ""
+    "nock": "",
+    "lodash": ""
   },
   "scripts": {
     "test": "mocha test"

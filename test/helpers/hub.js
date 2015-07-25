@@ -6,7 +6,7 @@ function poll(deadline, predicateCallback, resolve, reject) {
   if (predicateCallback())
     return resolve("Done")
   if (new Date().getTime() > deadline)
-    return reject("Predicate failed")
+    return reject(new Error("Predicate failed"))
   setTimeout(function() {
     poll(deadline, predicateCallback, resolve, reject)
   }, 0)
