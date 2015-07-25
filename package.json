@@ -1,6 +1,20 @@
 {
   "description": "ServiceHub",
+  "dependencies": {
+    "co": "^4.6.0",
+    "koa": "",
+    "koa-route": "",
+    "koa-bodyparser": "",
+    "supertest": "",
+    "restler": ""
+  },
   "devDependencies": {
-    "unit.js": ""
+    "unit.js": "",
+    "mocha": "",
+    "co-mocha": "",
+    "nock": ""
+  },
+  "scripts": {
+    "test": "mocha test"
   }
 }

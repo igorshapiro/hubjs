@@ -1,0 +1,8 @@
+global.test = require('unit.js')
+global.request = require('supertest')
+global.Hub = require('../lib/hub')
+global.nock = require('nock')
+global.hubClient = require('./helpers/hub_client')
+global.hubHelpers = require('./helpers/hub')
+require('mocha-co')
+require('./test_helper')()
