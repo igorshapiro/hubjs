@@ -1,15 +1,26 @@
 var route = require('koa-route')
+var co = require('co')
 var koa = require('koa')
 var Hub = require('../../lib/hub.js')
 
 function poll(deadline, predicateCallback, resolve, reject) {
-  if (predicateCallback())
-    return resolve("Done")
-  if (new Date().getTime() > deadline)
-    return reject(new Error("Predicate failed"))
-  setTimeout(function() {
-    poll(deadline, predicateCallback, resolve, reject)
-  }, 0)
+  var promise
+  if (predicateCallback.constructor.name === 'GeneratorFunction')
+    promise = co(predicateCallback)
+  else
+    promise = Promise.resolve(predicateCallback())
+
+  promise
+    .then(function (result) {
+      if (result)
+        return resolve("Done")
+      if (new Date().getTime() > deadline)
+        return reject(new Error("Predicate failed"))
+      setTimeout(function() {
+        poll(deadline, predicateCallback, resolve, reject)
+      }, 0)
+    })
+    .catch(reject)
 }
 
 module.exports = {

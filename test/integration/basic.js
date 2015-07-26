@@ -14,22 +14,37 @@ describe('ServiceHub', function() {
     yield hub.start()
   })
 
-  it ("Delivers message to service", function*() {
-    var req = nock(svcHost)
-      .post('/will_succeed')
-      .reply(200, 'Ok')
+  function mockEndpoint(path, status, msg, times) {
+    var req = nock(svcHost).post(path)
+    if (times)
+      req = req.times(times)
+    return req.reply(status, msg || "")
+  }
 
+  it ("Delivers message to service", function*() {
+    var req = mockEndpoint('/will_succeed', 200, 'Ok')
     yield hubClient.sendMessage({type: 'will_succeed'})
     yield hubHelpers.expectWithin(1000, req.isDone)
   })
 
-  it ("Re-delivers message to service if 2xx or 3xx not returned", function*() {
-    var req = nock(svcHost)
-      .post('/will_fail')
-      .times(5)
-      .reply(500, 'Failure')
-
+  it ("Puts message in dead letter if maxAttempts reached", function*() {
+    var req = mockEndpoint('/will_fail', 500, 'Failure', 5)
     yield hubClient.sendMessage({type: 'will_fail'})
-    yield hubHelpers.expectWithin(200, function() { req.pendingMocks == 0 })
+    yield hubHelpers.expectWithin(200, function*() {
+      var deadMessages = yield hub.repo.getService('sub').getDeadMessages()
+      return deadMessages.length == 1
+    })
+  })
+
+  it ("Re-delivers message to service if 2xx or 3xx not returned", function*() {
+    var req = mockEndpoint('/will_fail', 500, 'Failure', 5)
+    yield hubClient.sendMessage({type: 'will_fail'})
+    yield hubHelpers.expectWithin(200, function() {
+      return req.pendingMocks().length == 0
+    })
+  })
+
+  it ("Is performanct :)", function*() {
+    
   })
 })

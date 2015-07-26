@@ -2,7 +2,7 @@ var rest = require('restler')
 
 module.exports = {
   sendMessage: function*(msg) {
-    yield new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       rest
         .postJson("http://localhost:8080/api/v1/messages", msg)
         .on('success', function(data, response) {
