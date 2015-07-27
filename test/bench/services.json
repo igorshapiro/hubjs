@@ -1,0 +1,11 @@
+{
+  "services": {
+    "pub": {
+      "publishes": ["load_test"]
+    },
+    "sub": {
+      "subscribes": ["load_test"],
+      "endpoint": "http://localhost:3100/:type"
+    }
+  }
+}
