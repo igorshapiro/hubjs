@@ -43,23 +43,4 @@ describe('ServiceHub', function() {
       return req.pendingMocks().length == 0
     })
   })
-
-  it ("Is performant :)", function(done) {
-    this.timeout(5000)
-
-    var counter = 0
-    var req = mockEndpoint('/will_succeed', 200, function() {
-      counter += 1
-    }, 10000)
-    for (var i = 0; i < 1000; i++) {
-      co(function*() {
-        yield hubClient.sendMessage({type: 'will_succeed'})
-      })
-    }
-    var secs = 3
-    setTimeout(function() {
-      console.log(`${1.0 * counter / secs} req/sec`)
-      done()
-    }, secs * 1000)
-  })
 })
