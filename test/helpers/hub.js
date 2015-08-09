@@ -33,6 +33,14 @@ module.exports = {
     })
   },
 
+  expectAfter: function(timeoutMillis, predicateCallback) {
+    return new Promise(function(resolve, reject) {
+      setTimeout(function() {
+        predicateCallback() ? resolve() : reject()
+      }, timeoutMillis)
+    })
+  },
+
   startHub: function(options) {
     return new Hub(options)
   },

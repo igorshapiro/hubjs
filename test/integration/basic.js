@@ -1,5 +1,6 @@
 describe('ServiceHub', function() {
   var svcHost = "http://localhost:3100"
+  var CONCURRENCY = 5
 
   var hub = null
   before(function*() {
@@ -8,11 +9,18 @@ describe('ServiceHub', function() {
         publishes: ['will_succeed', 'will_fail']
       },
       sub: {
-        subscribes: ['will_succeed', 'will_fail']
+        subscribes: ['will_succeed', 'will_fail'],
+        concurrency: CONCURRENCY
       }
     }}})
     yield hub.start()
   })
+
+  beforeEach(function*() {
+    yield hub.hardReset()
+  })
+
+  afterEach(nock.cleanAll)
 
   function mockEndpoint(path, status, msg, times) {
     var req = nock(svcHost).post(path)
@@ -20,6 +28,27 @@ describe('ServiceHub', function() {
       req = req.times(times)
     return req.reply(status, msg || "")
   }
+
+  it ("Doesn't send more than `concurrency` messages", function*() {
+    var TEN_SECONDS = 10000
+
+    var counter = 0
+    var req = mockEndpoint("/will_succeed", function(uri, request, cb) {
+      counter++
+      setTimeout(function() {
+        cb(null, [200, "Ok"])
+      }, TEN_SECONDS)
+    }, "", 10)
+
+
+    yield _(CONCURRENCY * 2).range().map(function() {
+      return hubClient.sendMessage({type: 'will_succeed'})
+    }).value()
+
+    yield hubHelpers.expectAfter(200, function() {
+      return test.number(counter).is(CONCURRENCY)
+    })
+  })
 
   it ("Delivers message to service", function*() {
     var req = mockEndpoint('/will_succeed', 200, 'Ok')
