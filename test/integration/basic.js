@@ -45,31 +45,31 @@ describe('ServiceHub', function() {
       return hubClient.sendMessage({type: 'will_succeed'})
     }).value()
 
-    yield hubHelpers.expectAfter(200, function() {
-      return test.number(counter).is(CONCURRENCY)
-    })
+    yield expect(function() {
+      return counter == CONCURRENCY
+    }).within(200).to.become(true)
   })
 
   it ("Delivers message to service", function*() {
     var req = mockEndpoint('/will_succeed', 200, 'Ok')
     yield hubClient.sendMessage({type: 'will_succeed'})
-    yield hubHelpers.expectWithin(1000, req.isDone)
+    yield expect(req.isDone).to.within(200).become(true)
   })
 
   it ("Puts message in dead letter if maxAttempts reached", function*() {
     var req = mockEndpoint('/will_fail', 500, 'Failure', 5)
     yield hubClient.sendMessage({type: 'will_fail'})
-    yield hubHelpers.expectWithin(200, function*() {
+
+    yield expect(function*(){
       var deadMessages = yield hub.repo.getService('sub').getDeadMessages()
       return deadMessages.length == 1
-    })
+    }).within(200).to.become(true)
   })
 
   it ("Re-delivers message to service if 2xx or 3xx not returned", function*() {
     var req = mockEndpoint('/will_fail', 500, 'Failure', 5)
     yield hubClient.sendMessage({type: 'will_fail'})
-    yield hubHelpers.expectWithin(200, function() {
-      return req.pendingMocks().length == 0
-    })
+    yield expect(function() { return req.pendingMocks.length == 0 } )
+      .within(200).to.become(true)
   })
 })

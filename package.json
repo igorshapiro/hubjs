@@ -11,7 +11,8 @@
     "bunyan": ""
   },
   "devDependencies": {
-    "unit.js": "",
+    "chai": "",
+    "chai-as-promised": "",
     "mocha": "",
     "co-mocha": "",
     "nock": "",
