@@ -22,6 +22,6 @@
     "lodash": ""
   },
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha --harmony-generators test"
   }
 }

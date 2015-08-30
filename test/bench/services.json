@@ -1,11 +1,13 @@
 {
   "services": {
     "pub": {
-      "publishes": ["load_test"]
+      "publishes": ["load_test"],
+      "concurrency": 100
     },
     "sub": {
       "subscribes": ["load_test"],
-      "endpoint": "http://localhost:3100/:type"
+      "endpoint": "http://localhost:3100/:type",
+      "concurrency": 100
     }
   }
 }

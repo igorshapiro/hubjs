@@ -24,7 +24,7 @@ module.exports = {
 
   getProcessingMessages: function*(serviceName) {
     return handleHttpResponse(
-      rest.get(`http://localhost:8080/api/v1/${serviceName}/processing`)
+      rest.get("http://localhost:8080/api/v1/" + serviceName + "/processing")
     )
   }
 }
