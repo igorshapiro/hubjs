@@ -1,14 +1,15 @@
 {
   "description": "ServiceHub",
   "dependencies": {
+    "amqplib": "",
+    "bunyan": "",
     "co": "^4.6.0",
     "koa": "",
-    "koa-route": "",
     "koa-bodyparser": "",
-    "supertest": "",
+    "koa-route": "",
+    "redis": "^0.12.1",
     "restler": "",
-    "amqplib": "",
-    "bunyan": ""
+    "supertest": ""
   },
   "devDependencies": {
     "chai": "",
