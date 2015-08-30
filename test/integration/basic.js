@@ -39,7 +39,7 @@ describe('ServiceHub', function() {
         var msgs = yield hubClient.getProcessingMessages("sub")
         return _.isEqual(msgs.stats, {total: 1}) &&
           _.isEqual(msgs.messages, [
-            {type: 'will_succeed', id: msgId, maxAttempts: 5, attemptsMade: 0, env: "default"}
+            {messageType: 'will_succeed', id: msgId, maxAttempts: 5, attemptsMade: 0, env: "default"}
           ])
       }).within(30).to.become(true)
 
