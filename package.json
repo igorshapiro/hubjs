@@ -11,15 +11,15 @@
     "node-statsd": "^0.1.1",
     "redis": "^0.12.1",
     "restler": "",
-    "supertest": ""
+    "supertest": "",
+    "lodash": ""
   },
   "devDependencies": {
     "chai": "",
     "chai-as-promised": "",
     "mocha": "",
     "co-mocha": "",
-    "nock": "",
-    "lodash": ""
+    "nock": ""
   },
   "scripts": {
     "test": "mocha --harmony-generators test"
