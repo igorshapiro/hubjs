@@ -8,6 +8,7 @@
     "koa-bodyparser": "",
     "koa-route": "",
     "mongojs": "^1.3.0",
+    "node-statsd": "^0.1.1",
     "redis": "^0.12.1",
     "restler": "",
     "supertest": ""

@@ -39,7 +39,7 @@ describe('ServiceHub', function() {
         var msgs = yield hubClient.getProcessingMessages("sub")
         return _.isEqual(msgs.stats, {total: 1}) &&
           _.isEqual(msgs.messages, [
-            {type: 'will_succeed', id: msgId, maxAttempts: 5, attemptsMade: 0}
+            {type: 'will_succeed', id: msgId, maxAttempts: 5, attemptsMade: 0, env: "default"}
           ])
       }).within(30).to.become(true)
 
@@ -76,13 +76,13 @@ describe('ServiceHub', function() {
 
   it ("Delivers message to service", function*() {
     var req = mockEndpoint({path: '/will_succeed'})
-    yield hubClient.sendMessage({type: 'will_succeed'})
+    yield hubClient.sendMessage({type: 'will_succeed', attemptsMade: 3})
     yield expect(req.isDone).to.within(200).become(true)
   })
 
   it ("Puts message in dead letter if maxAttempts reached", function*() {
-    var req = mockEndpoint({path: '/will_fail', status: 500, msg: 'Failure', times: 5})
-    yield hubClient.sendMessage({type: 'will_fail'})
+    var req = mockEndpoint({path: '/will_fail', status: 500, msg: 'Failure', times: 4})
+    yield hubClient.sendMessage({type: 'will_fail', attemptsMade: 1})
 
     yield expect(function*(){
       var deadMessages = yield hub.repo.getService('sub').getDeadMessages()
