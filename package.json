@@ -7,21 +7,23 @@
     "koa": "",
     "koa-bodyparser": "",
     "koa-route": "",
+    "lodash": "",
     "mongojs": "^1.3.0",
+    "newrelic": "^1.22.0",
     "node-statsd": "^0.1.1",
     "redis": "^0.12.1",
     "restler": "",
-    "supertest": "",
-    "lodash": ""
+    "shortid": "^2.2.2"
   },
   "devDependencies": {
     "chai": "",
     "chai-as-promised": "",
-    "mocha": "",
     "co-mocha": "",
+    "mocha": "",
     "nock": ""
   },
   "scripts": {
-    "test": "mocha --harmony-generators test"
+    "test": "mocha --harmony-generators test",
+    "start": "node --harmony_generators lib/boot.js"
   }
 }
