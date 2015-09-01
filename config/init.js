@@ -1,3 +1,5 @@
+require('newrelic')
+
 var bunyan = require('bunyan')
 global.log = bunyan.createLogger({
   name: "service_hub",
