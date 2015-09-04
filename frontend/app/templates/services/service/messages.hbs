@@ -1,0 +1,28 @@
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Env</th>
+      <th>Type</th>
+      <th>Retries</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each model as |msg|}}
+      <tr {{action 'expandMessage' msg}}>
+        <td>{{msg.id}}</td>
+        <td>{{msg.env}}</td>
+        <td>{{msg.messageType}}</td>
+        <td>
+          {{msg.attemptsMade}} / {{msg.maxAttempts}}
+        </td>
+      </tr>
+      <tr class="{{if msg._isExpanded '' 'hide'}}">
+        <td colspan="4" data-msg-id={{msg.id}}>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+{{page-numbers currentPage=page totalPages=100}}

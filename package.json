@@ -6,6 +6,7 @@
     "co": "^4.6.0",
     "koa": "",
     "koa-bodyparser": "",
+    "koa-cors": "0.0.16",
     "koa-route": "",
     "koa-static": "^1.4.9",
     "lodash": "",

@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-lg-2">
+    <ul class="nav nav-pills nav-stacked">
+      {{#each model as |s|}}
+        <li>
+          <h3>{{s.name}}</h3>
+          <div class="row">
+            <h6>
+            {{#link-to 'services.service.messages' s.name 'processing'}}Processing{{/link-to}}
+            {{#link-to 'services.service.messages' s.name 'dead'}}Dead{{/link-to}}
+            </h6>
+          </div>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+  <div class="col-lg-10">
+    {{outlet}}
+  </div>
+</div>

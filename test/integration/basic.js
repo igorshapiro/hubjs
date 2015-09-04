@@ -30,6 +30,40 @@ describe('ServiceHub', function() {
     return req.reply(options.status || 200, options.msg || "Ok")
   }
 
+  describe ("api/services", function() {
+    it ("returns list of services", function*() {
+      var services = yield hubClient.getServices()
+      expect(services).to.eql({
+        services: [
+          {id: "pub", name: "pub"},
+          {id: "sub", name: "sub"}
+        ]
+      })
+    })
+  })
+
+  describe ("api/dead", function() {
+    beforeEach(function*(){
+      var promises = []
+      for (var i = 0; i < 30; i++)
+        promises.push(hub.repo.getService("pub")
+          .kill({type: 'will_succeed'})
+        )
+      yield promises
+    })
+    it ("returns dead messages", function*() {
+      var msgs = yield hubClient.getDeadMessages("pub", {page: 2, pageSize: 25})
+      var expectedArray = []
+      for (var i = 0; i < 5; i++) {
+        expectedArray.push({type: "will_succeed"})
+      }
+      expect(msgs).to.eql({
+        stats: {total: 30},
+        messages: expectedArray
+      })
+    })
+  })
+
   describe ("api/processing", function() {
     it("returns messages being processed", function*() {
       mockEndpoint({path: "/will_succeed", delay: 50})
@@ -86,7 +120,7 @@ describe('ServiceHub', function() {
 
     yield expect(function*(){
       var deadMessages = yield hub.repo.getService('sub').getDeadMessages()
-      return deadMessages.length == 1
+      return deadMessages.messages.length == 1
     }).within(200).to.become(true)
   })
 
