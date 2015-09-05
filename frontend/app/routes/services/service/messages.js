@@ -14,5 +14,17 @@ export default Ember.Route.extend(PaginationMixin, {
       service: service.get('id'),
       page: params.page
     })
+  },
+
+  actions: {
+    delete: function(msg) {
+      var params = this.get('context.otherParams')
+      msg.set('metaParams', params)
+      // console.log()
+      msg.destroyRecord()
+        .then(function() {
+          console.log("Deleted")
+        })
+    }
   }
 })

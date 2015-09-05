@@ -6,5 +6,8 @@ export default DS.Model.extend({
   attemptsMade: DS.attr(),
   env: DS.attr(),
   messageType: DS.attr(),
-  raw: DS.attr()
+  raw: DS.attr(),
+
+  // Used to build the delete url. Can be dead|processing
+  metaParams: DS.attr()
 })

@@ -5,16 +5,21 @@
       <th>Env</th>
       <th>Type</th>
       <th>Retries</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     {{#each model as |msg|}}
-      <tr {{action 'expandMessage' msg}}>
-        <td>{{msg.id}}</td>
+      <tr>
+        <td {{action 'expandMessage' msg}}>{{msg.id}}</td>
         <td>{{msg.env}}</td>
         <td>{{msg.messageType}}</td>
         <td>
           {{msg.attemptsMade}} / {{msg.maxAttempts}}
+        </td>
+        <td>
+          <button class="btn" {{action 'delete' msg}}>Delete</button>
+          <button class="btn" {{action 'reenqueue' msg}}>Re-Enqueue</button>
         </td>
       </tr>
       <tr class="{{if msg._isExpanded '' 'hide'}}">
