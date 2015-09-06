@@ -19,7 +19,7 @@
         </td>
         <td>
           <button class="btn" {{action 'delete' msg}}>Delete</button>
-          <button class="btn" {{action 'reenqueue' msg}}>Re-Enqueue</button>
+          <button class="btn" {{action 'delete' msg true}}>Re-Enqueue</button>
         </td>
       </tr>
       <tr class="{{if msg._isExpanded '' 'hide'}}">

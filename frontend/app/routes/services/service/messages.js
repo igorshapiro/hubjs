@@ -17,13 +17,12 @@ export default Ember.Route.extend(PaginationMixin, {
   },
 
   actions: {
-    delete: function(msg) {
+    delete: function(msg, reenqueue) {
       var params = this.get('context.otherParams')
+      params.reenqueue = reenqueue || false
       msg.set('metaParams', params)
-      // console.log()
       msg.destroyRecord()
         .then(function() {
-          console.log("Deleted")
         })
     }
   }
