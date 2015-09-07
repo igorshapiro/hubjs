@@ -2,6 +2,7 @@
   "description": "ServiceHub",
   "dependencies": {
     "amqplib": "",
+    "bluebird": "^2.9.34",
     "bunyan": "",
     "co": "^4.6.0",
     "koa": "",
