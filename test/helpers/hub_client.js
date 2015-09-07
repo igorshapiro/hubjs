@@ -26,5 +26,16 @@ module.exports = {
     return handleHttpResponse(
       rest.get("http://localhost:8080/api/v1/" + serviceName + "/processing")
     )
+  },
+  getDeadMessages: function*(serviceName, data) {
+    return handleHttpResponse(
+      rest.get("http://localhost:8080/api/v1/" + serviceName + "/dead", {query: data})
+    )
+  },
+
+  getServices: function*() {
+    return handleHttpResponse(
+      rest.get("http://localhost:8080/api/v1/services")
+    )
   }
 }

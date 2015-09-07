@@ -1,4 +1,5 @@
-require('newrelic')
+global.config = require('./config.json')
+if (config.newrelic) require('newrelic')
 
 var bunyan = require('bunyan')
 global.log = bunyan.createLogger({

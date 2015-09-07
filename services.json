@@ -1,0 +1,13 @@
+{
+  "services": {
+    "pub": {
+      "publishes": ["load_test", "pricing_changed"],
+      "concurrency": 100
+    },
+    "sub": {
+      "subscribes": ["load_test", "pricing_changed"],
+      "endpoint": "http://localhost:3100/:type",
+      "concurrency": 100
+    }
+  }
+}
