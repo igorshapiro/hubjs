@@ -1,0 +1,2 @@
+#!/bin/bash
+cd frontend && EMBER_ENV=production ember build
