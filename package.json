@@ -5,6 +5,7 @@
     "bluebird": "2.9.34",
     "bunyan": "",
     "co": "^4.6.0",
+    "forever-agent": "0.6.1",
     "koa": "",
     "koa-bodyparser": "",
     "koa-cors": "0.0.16",
@@ -15,6 +16,7 @@
     "newrelic": "^1.22.0",
     "node-statsd": "^0.1.1",
     "redis": "^0.12.1",
+    "request": "2.61.0",
     "restler": "",
     "shortid": "^2.2.2"
   },
