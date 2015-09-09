@@ -1,3 +1,3 @@
-hub: node --harmony_generators ../../lib/boot.js | bunyan
-server: node --harmony_generators server.js
+hub: node ../../lib/boot.js | bunyan
+server: node server.js
 #wrk: wrk -c 128 -t 4 -d 15s http://localhost:8080/api/v1/messages -sload.lua

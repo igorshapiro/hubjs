@@ -1,29 +1,29 @@
 {
   "description": "ServiceHub",
   "dependencies": {
-    "amqplib": "",
-    "bluebird": "2.9.34",
-    "bunyan": "",
-    "co": "^4.6.0",
+    "amqplib": "0.3.2",
+    "bluebird": "2.10.0",
+    "bunyan": "1.5.1",
+    "co": "4.6.0",
     "forever-agent": "0.6.1",
-    "koa": "",
-    "koa-bodyparser": "",
+    "koa": "1.0.0",
+    "koa-bodyparser": "2.0.1",
     "koa-cors": "0.0.16",
-    "koa-route": "",
-    "koa-static": "^1.4.9",
-    "lodash": "",
-    "mongojs": "^1.3.0",
-    "newrelic": "^1.22.0",
-    "node-statsd": "^0.1.1",
-    "redis": "^0.12.1",
+    "koa-route": "2.4.2",
+    "koa-static": "1.4.9",
+    "lodash": "3.10.1",
+    "mongojs": "1.3.0",
+    "newrelic": "1.22.0",
+    "node-statsd": "0.1.1",
+    "redis": "1.0.0",
     "request": "2.61.0",
-    "restler": "",
-    "shortid": "^2.2.2"
+    "restler": "3.3.0",
+    "shortid": "2.2.2"
   },
   "devDependencies": {
-    "chai": "",
-    "chai-as-promised": "",
-    "co-mocha": "",
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
+    "co-mocha": "^1.1.2",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-include": "^2.0.2",
@@ -32,11 +32,12 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.0.4",
     "gulp-uglify": "^1.4.0",
-    "mocha": "",
-    "nock": ""
+    "mocha": "^2.3.2",
+    "nock": "^2.10.0",
+    "supertest": "^1.1.0"
   },
   "scripts": {
-    "test": "mocha --harmony-generators test",
-    "start": "node --harmony_generators lib/boot.js"
+    "test": "mocha test",
+    "start": "node lib/boot.js"
   }
 }
