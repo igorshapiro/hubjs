@@ -13,7 +13,7 @@ describe('ServiceHub', function() {
         subscribes: ['will_succeed', 'will_fail'],
         concurrency: CONCURRENCY
       }
-    }}})
+    }}, schedulePollingInterval: 100})
     yield hub.start()
   })
 
@@ -38,6 +38,26 @@ describe('ServiceHub', function() {
           {id: "pub", name: "pub"},
           {id: "sub", name: "sub"}
         ]
+      })
+    })
+  })
+
+  describe ("scheduling", function() {
+    describe ("deliverInMillis", function() {
+      it ("will deliver the message only after deliverInMillis passed", function*(){
+        var delay = 200
+        var end
+        mockEndpoint({path: "/will_succeed", status: function(uri, request, cb) {
+          end = Date.now()
+          this.status = 200
+        }})
+        var start = Date.now()
+        yield hubClient.sendMessage({type: "will_succeed", deliverInMillis: delay})
+
+        yield expect(function() {
+          return end != null
+        }).to.within(delay * 2).become(true)
+        expect(end - start).to.be.above(delay)
       })
     })
   })
