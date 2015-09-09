@@ -1,7 +1,7 @@
 describe('ServiceHub', function() {
   var svcHost = "http://localhost:3100"
   var CONCURRENCY = 5
-  var TEN_SECONDS = 100
+  var TEN_SECONDS = 10000
 
   var hub = null
   before(function*() {
@@ -48,10 +48,10 @@ describe('ServiceHub', function() {
         var delay = 200
         var end
         mockEndpoint({path: "/will_succeed", status: function(uri, request, cb) {
-          end = new Date().getTime()
+          end = Date.now()
           this.status = 200
         }})
-        var start = new Date().getTime()
+        var start = Date.now()
         yield hubClient.sendMessage({type: "will_succeed", deliverInMillis: delay})
 
         yield expect(function() {
