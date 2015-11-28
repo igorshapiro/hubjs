@@ -93,7 +93,8 @@ describe('ServiceHub', function() {
         var msgs = yield hubClient.getProcessingMessages("sub")
         return _.isEqual(msgs.stats, {total: 1}) &&
           _.isEqual(msgs.messages, [
-            {messageType: 'will_succeed', id: msgId, maxAttempts: 5, attemptsMade: 0, env: "default"}
+            { messageType: 'will_succeed', id: msgId, maxAttempts: 5, attemptsMade: 0, env: "default",
+              attemptDelays: config.msgDefaults.attemptDelays }
           ])
       }).within(30).to.become(true)
 
@@ -136,18 +137,28 @@ describe('ServiceHub', function() {
 
   it ("Puts message in dead letter if maxAttempts reached", function*() {
     var req = mockEndpoint({path: '/will_fail', status: 500, msg: 'Failure', times: 4})
-    yield hubClient.sendMessage({type: 'will_fail', attemptsMade: 1})
+    yield hubClient.sendMessage({type: 'will_fail', attemptsMade: 2, attemptDelays: [4]})
 
     yield expect(function*(){
       var deadMessages = yield hub.repo.getService('sub').getDeadMessages()
       return deadMessages.messages.length == 1
-    }).within(200).to.become(true)
+    }).within(500).to.become(true)
   })
 
-  it ("Re-delivers message to service if 2xx or 3xx not returned", function*() {
-    var req = mockEndpoint({path: '/will_fail', status: 500, msg: 'Failure', times: 5})
-    yield hubClient.sendMessage({type: 'will_fail'})
-    yield expect(function() { return req.pendingMocks.length == 0 } )
-      .within(200).to.become(true)
+  describe ('Re-delivery using Exponential Backoff if 2xx or 3xx not returned', () => {
+    it ('delays each retry according to configuration', function* () {
+      var mock1 = mockEndpoint({ path: '/will_fail', status: 500 })
+      var mock2 = mockEndpoint({ path: '/will_fail', status: 500 })
+      var mock3 = mockEndpoint({ path: '/will_fail', status: 500 })
+      var mock4 = mockEndpoint({ path: '/will_fail', status: 500 })
+
+      var attemptDelays = [ 60, 130, 320 ]
+      yield hubClient.sendMessage({ type: 'will_fail', attemptsMade: 0, maxAttempts: 4, attemptDelays: attemptDelays })
+
+      yield expect(() => mock1.pendingMocks().length === 0).to.within(200).become(true)
+      yield expect(() => mock2.pendingMocks().length === 0).to.within(220).become(true)
+      yield expect(() => mock3.pendingMocks().length === 0).to.within(360).become(true)
+      yield expect(() => mock4.pendingMocks().length === 0).to.within(740).become(true)
+    })
   })
 })
