@@ -3,6 +3,6 @@ module.exports = {
   msgDefaults: {
     maxAttempts: 5,
     env: "default",
-    attemptDelays: [ (30).seconds(), (2).minutes(), (10).minutes(), (30).minutes() ]
+    attemptDelays: [ (5).seconds(), (3).minutes(), (30).minutes(), (6).hours() ]
   }
 }
