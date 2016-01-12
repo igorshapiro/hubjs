@@ -1,3 +1,7 @@
+"use strict"
+
+var Bluebird = require('bluebird')
+
 describe('ServiceHub', function() {
   var svcHost = "http://localhost:3100"
   var CONCURRENCY = 5
@@ -145,20 +149,29 @@ describe('ServiceHub', function() {
     }).within(500).to.become(true)
   })
 
-  describe ('Re-delivery using Exponential Backoff if 2xx or 3xx not returned', () => {
+  describe ('Re-delivery using schedule if 2xx or 3xx not returned', () => {
     it ('delays each retry according to configuration', function* () {
-      var mock1 = mockEndpoint({ path: '/will_fail', status: 500 })
-      var mock2 = mockEndpoint({ path: '/will_fail', status: 500 })
-      var mock3 = mockEndpoint({ path: '/will_fail', status: 500 })
-      var mock4 = mockEndpoint({ path: '/will_fail', status: 500 })
+      var timestamps = []
+      var failingMock = mockEndpoint({ path: '/will_fail', status: 500, times: 5 })
+        .filteringRequestBody(function(body) {
+          timestamps.push(new Date().getTime())
+          return body
+        })
 
-      var attemptDelays = [ 60, 130, 320 ]
-      yield hubClient.sendMessage({ type: 'will_fail', attemptsMade: 0, maxAttempts: 4, attemptDelays: attemptDelays })
+      var attemptDelaysMs = [50, 100, 300]
 
-      yield expect(() => mock1.pendingMocks().length === 0).to.within(200).become(true)
-      yield expect(() => mock2.pendingMocks().length === 0).to.within(220).become(true)
-      yield expect(() => mock3.pendingMocks().length === 0).to.within(360).become(true)
-      yield expect(() => mock4.pendingMocks().length === 0).to.within(740).become(true)
+      yield hubClient.sendMessage({
+        type: 'will_fail',
+        maxAttempts: 4,
+        attemptDelays: attemptDelaysMs
+      })
+
+      yield Bluebird.delay(_.sum(attemptDelaysMs) * 1.5)
+      for (var i = 0; i < attemptDelaysMs.length; i++) {
+        var actual = timestamps[i + 1] - timestamps[i]
+        var expected = attemptDelaysMs[i]
+        expect(actual).to.be.at.least(expected)
+      }
     })
   })
 })
