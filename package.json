@@ -1,5 +1,7 @@
 {
   "description": "ServiceHub",
+  "repository": "https://github.com/igorshapiro/hubjs",
+  "license": "MIT",
   "dependencies": {
     "amqplib": "0.3.2",
     "bluebird": "2.10.0",
