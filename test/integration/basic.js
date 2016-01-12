@@ -154,7 +154,7 @@ describe('ServiceHub', function() {
       var timestamps = []
       var failingMock = mockEndpoint({ path: '/will_fail', status: 500, times: 5 })
         .filteringRequestBody(function(body) {
-          timestamps.push(new Date().getTime())
+          timestamps.push(Date.now())
           return body
         })
 
