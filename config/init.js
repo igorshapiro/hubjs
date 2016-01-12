@@ -1,4 +1,6 @@
-global.config = require('./config.json')
+require('number-timespans')
+
+global.config = require('./config')
 if (config.newrelic) require('newrelic')
 
 var bunyan = require('bunyan')
@@ -11,4 +13,3 @@ global.log = bunyan.createLogger({
 })
 var StatsD = require('node-statsd')
 global.stats = new StatsD()
-module.exports = function() {}
