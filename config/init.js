@@ -1,4 +1,4 @@
-require('../lib/extend_number')
+require('number-timespans')
 
 global.config = require('./config')
 if (config.newrelic) require('newrelic')
