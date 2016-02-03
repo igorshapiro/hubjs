@@ -1,13 +1,27 @@
-# Prerequisites
+### Design
 
-Node 0.12+ or IOJS 2.0+
+#### Middlewares
 
-# ServiceHub
+- WebServer
+- API
+- RegisterMessage (enqueue outgoing)
+- DispatchMessage (outgoing -> inputs)
+- DeliverMessage (input -> service)
+- NewRelic
+- StatsD
+- Processing storage
+- LoadBalancer (concurrency manager)
+- Scheduler
+- ErrorHandler
+- DeadLetter storage
+- Archive storage (optional)
 
-# Tests
+#### Example scenario
 
-Run tests with
-
-```
-npm test
-```
+- WebServer:
+  - Exposes `app` instance
+  - On start - the http listener is started
+- API
+  - needs({web_server => 'webServer'})
+  - on initialization:
+    - this.
