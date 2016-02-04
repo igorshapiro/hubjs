@@ -12,6 +12,7 @@ Bluebird.promisifyAll(request)
 
 class SubscriberBuilder {
   constructor(scenario, msgType, options) {
+    this.baseUrl = "http://localhost"
     this.scenario = scenario
     this.msgType = msgType
     this.options = options || {}
@@ -37,6 +38,8 @@ class SubscriberBuilder {
       endpoint: this.path
     }
     if (this.concurrency) manifest.concurrency = this.concurrency
+
+    return manifest
   }
 }
 
@@ -46,6 +49,10 @@ class ScenarioBuilder {
     this.basePort = 8080
     this.hubBase = `http://localhost:${this.basePort}`
     this.hubs = []
+    this.testPromise = new Promise((resolve, reject) => {
+      this.resolveFunction = resolve
+      this.rejectFunction = reject
+    })
     return this
   }
 
@@ -77,7 +84,7 @@ class ScenarioBuilder {
 
   buildManifest() {
     var publisher = {
-
+      publishes: [this.subscriber.msgType]
     }
     var pubName = shortid.generate()
 
@@ -93,7 +100,7 @@ class ScenarioBuilder {
 
   *sendMessages() {
     var messagesEndpoint = `${this.hubBase}/api/v1/messages`
-    var times = this.messageOptions.times || 100
+    var times = this.messageOptions.times || 1
     for (var i = 0; i < times; i++) {
       var response = yield request.postAsync({
         url: messagesEndpoint,
@@ -110,13 +117,17 @@ class ScenarioBuilder {
 
   *setupMocks() {
     var sub = this.subscriber
-    // nock()
+    nock(this.subscriber.baseUrl)
+      .post(this.receivingPath)
+      .reply(this.subscriber.options.status || 200, function(uri, body) {
+        console.log("Hello")
+      })
+      .log(console.log)
   }
 
   *runTests() {
-    // return new Promise(function(resolve, reject) {
-    //
-    // })
+    this.testStartTS = Date.now()
+    return this.testPromise
   }
 
   buildConfig(options) {
