@@ -37,6 +37,14 @@ class SubscriberBuilder {
       subscribes: [this.msgType],
       endpoint: this.path
     }
+    if (this.options.retrySchedule) {
+      manifest.retrySchedule = this.options.retrySchedule
+    }
+    if (this.path) {
+      manifest.endpoint = this.path
+        .replace(':type', this.msgType)
+    }
+
     if (this.concurrency) manifest.concurrency = this.concurrency
 
     return manifest
