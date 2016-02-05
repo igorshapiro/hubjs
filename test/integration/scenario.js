@@ -53,6 +53,7 @@ class ScenarioBuilder {
       this.resolveFunction = resolve
       this.rejectFunction = reject
     })
+    this.requestsMade = []
     return this
   }
 
@@ -68,17 +69,17 @@ class ScenarioBuilder {
 
   itIsReceivedAt(path, options) {
     this.receivingPath = path
-    this.receivingOptions = options
+    this.receivingOptions = options || {}
     return this
   }
 
-  within(ms) {
-    this.withinTimes = [ms]
+  after(ms) {
+    this.afterMillis = ms
     return this
   }
 
-  withinTimes(times) {
-    this.withinTimes = times
+  withinSchedule() {
+    this.requestsSchedule = Array.prototype.slice.call(arguments)
     return this
   }
 
@@ -119,14 +120,47 @@ class ScenarioBuilder {
     var sub = this.subscriber
     nock(this.subscriber.baseUrl)
       .post(this.receivingPath)
-      .reply(this.subscriber.options.status || 200, function(uri, body) {
-        console.log("Hello")
+      .reply(this.subscriber.options.status || 200, (uri, body) => {
+        this.requestsMade.push({
+          uri: uri, body: body, ts: Date.now()
+        })
       })
       .log(console.log)
   }
 
+  checkAssertions() {
+    var requests = this.requestsMade
+    var schedule = this.requestsSchedule
+
+    // Handle the `after` constraint
+    var timePassed = Date.now() - this.testStartTS
+    if (timePassed < this.afterMillis) return
+
+    // Check schedule
+    if (schedule && schedule.length) {
+      var threshold = 50
+      if (requests.length !== schedule.length) return
+      var scheduleRanges = schedule
+        .map(_ => [testStartTS + _, testStartTS + _ + threshold])
+      for (var i = 0; i < scheduleRanges.length; i++) {
+        var requestTS = requests[i].ts
+        var range = scheduleRanges[i]
+        var fallsInRange = range[0] <= requestTS && requestTS <= range[1]
+        if (!fallsInRange) this.rejectFunction()
+      }
+      this.resolveFunction()
+    }
+
+    // Check simple requests count
+    var expectedRequestsCount = this.receivingOptions.times || 1
+    if (requests.length === expectedRequestsCount) {
+      this.resolveFunction()
+    }
+  }
+
   *runTests() {
     this.testStartTS = Date.now()
+    this.checkAssertionsInterval = setInterval(() => this.checkAssertions(), 50)
     return this.testPromise
   }
 
@@ -164,6 +198,8 @@ class ScenarioBuilder {
     yield this.hubs.map(_ => _.purge())
     yield this.hubs.map(_ => _.stop())
     this.hubs = []
+    if (this.checkAssertionsInterval)
+      clearInterval(this.checkAssertionsInterval)
   }
 }
 

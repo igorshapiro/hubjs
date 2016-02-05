@@ -22,10 +22,12 @@ describe('ServiceHub', function() {
 
   it ("Retries message delivery on failure", function*() {
     yield hubScenario.forHub()
-      .withSubscriber('msg', {status: 500}).at('/handlers/:type')
+      .withSubscriber('msg', {
+        status: 500, retrySchedule: [100, 200, 300]
+      }).at('/handlers/:type')
       .whenSendingMessage({type: 'msg'})
       .itIsReceivedAt('/handlers/msg')
-      .withinTimes(100, 200, 300, 400, 500)
+      .withinSchedule(0, 100, 300, 600, 900)
       .run()
   })
 
@@ -38,7 +40,7 @@ describe('ServiceHub', function() {
           .at('/handlers/:type')
         .whenSendingMessage({type: 'msg'}, {times: 100})
         .itIsReceivedAt('/handlers/msg', {times: 5})
-        .within(100)
+        .after(100)
         .run()
     })
 
@@ -50,7 +52,7 @@ describe('ServiceHub', function() {
           .at('/handlers/:type')
         .whenSendingMessage({type: 'msg'}, {times: 100})
         .itIsReceivedAt('/handlers/msg', {times: 6})
-        .within(100)
+        .after(100)
         .run()
     })
   })
