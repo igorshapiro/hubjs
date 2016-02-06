@@ -175,18 +175,21 @@ class ScenarioBuilder {
   buildConfig(options) {
     var WebServer = require('./../../lib/middlewares/web_server')
     var API = require('./../../lib/middlewares/api')
+    var OutQueue = require('./../../lib/middlewares/out_queue')
     // Used for launching multiple hub instances
     var port = this.basePort + (options.instanceNumber || 0)
     return {
       middlewares: [
         { type: WebServer, params: { port: port } },
         { type: API },
+        { type: OutQueue },
       ]
     }
   }
 
   *run() {
     var manifest = this.buildManifest()
+    // console.log(manifest)
     var numInstances = this.options.instances || 1
     this.hubs = []
     for (var i = 0; i < numInstances; i++) {
@@ -194,6 +197,7 @@ class ScenarioBuilder {
         manifest: manifest,
         config: this.buildConfig({instanceNumber: i})
       })
+      // console.log(hub.services)
       this.hubs.push(hub)
     }
     yield this.hubs.map(_ => _.run())
