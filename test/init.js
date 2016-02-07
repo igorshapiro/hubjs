@@ -1,3 +1,5 @@
+require('./../config/init')
+
 global.chai = require('chai')
 global.expect = chai.expect
 

@@ -35,13 +35,12 @@ class SubscriberBuilder {
   buildManifest() {
     var manifest = {
       subscribes: [this.msgType],
-      endpoint: this.path
     }
     if (this.options.retrySchedule) {
       manifest.retrySchedule = this.options.retrySchedule
     }
     if (this.path) {
-      manifest.endpoint = this.path
+      manifest.endpoint = `${this.baseUrl}${this.path}`
         .replace(':type', this.msgType)
     }
 
@@ -133,7 +132,7 @@ class ScenarioBuilder {
           uri: uri, body: body, ts: Date.now()
         })
       })
-      .log(console.log)
+      .log(_ => log.error(_))
   }
 
   checkAssertions() {
@@ -178,6 +177,7 @@ class ScenarioBuilder {
     var OutQueue = require('./../../lib/middlewares/out_queue')
     var Dispatcher = require('./../../lib/middlewares/dispatcher')
     var InQueue = require('./../../lib/middlewares/in_queue')
+    var Delivery = require('./../../lib/middlewares/delivery')
     // Used for launching multiple hub instances
     var port = this.basePort + (options.instanceNumber || 0)
     return {
@@ -187,13 +187,14 @@ class ScenarioBuilder {
         { type: OutQueue },
         { type: Dispatcher },
         { type: InQueue },
+        { type: Delivery },
       ]
     }
   }
 
   *run() {
     var manifest = this.buildManifest()
-    // console.log(manifest)
+    console.log(manifest)
     var numInstances = this.options.instances || 1
     this.hubs = []
     for (var i = 0; i < numInstances; i++) {
