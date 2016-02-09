@@ -1,5 +1,10 @@
 "use strict"
 
+var Bluebird = require('bluebird')
+Bluebird.config({
+  longStackTraces: true,
+  warnings: true
+})
 var WebServer = require('./../lib/middlewares/web_server')
 
 module.exports = {

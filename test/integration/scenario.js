@@ -51,8 +51,7 @@ class SubscriberBuilder {
 }
 
 class ScenarioBuilder {
-  forHub(options) {
-    this.options = options || {}
+  constructor() {
     this.basePort = 8080
     this.hubBase = `http://localhost:${this.basePort}`
     this.hubs = []
@@ -61,6 +60,10 @@ class ScenarioBuilder {
       this.rejectFunction = reject
     })
     this.requestsMade = []
+  }
+
+  forHub(options) {
+    this.options = options || {}
     return this
   }
 
