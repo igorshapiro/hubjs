@@ -155,7 +155,7 @@ class ScenarioBuilder {
 
     // Handle the `after` constraint
     var timePassed = Date.now() - this.testStartTS
-    if (timePassed < this.afterMillis) return
+    if (this.afterMillis && timePassed < this.afterMillis) return
 
     // Check schedule
     if (schedule && schedule.length) {
@@ -185,14 +185,27 @@ class ScenarioBuilder {
           this.rejectFunction(
             `#${i} ${requestTS} doesn't fall in [${range[0]}..${range[1]}]`
           )
+          return
         }
       }
       this.resolveFunction()
+      return
     }
 
     // Check simple requests count
     var expectedRequestsCount = this.receivingOptions.times || 1
-    if (requests.length === expectedRequestsCount) {
+    var requestCountsMatch = requests.length === expectedRequestsCount
+    if (this.afterMillis) {
+      if (requestCountsMatch) {
+        this.resolveFunction()
+      }
+      else {
+        this.rejectFunction(new Error(
+          `Expected ${expectedRequestsCount}, but got ${requests.length}`
+        ))
+      }
+    }
+    else if (requestCountsMatch) {
       this.resolveFunction()
     }
   }
