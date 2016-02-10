@@ -14,20 +14,20 @@ describe('ServiceHub', function() {
 
   it ("Delivers message to service", function*() {
     yield hubScenario.forHub()
-      .withSubscriber('msg').at('/handlers/:type')
-      .whenSendingMessage({type: 'msg'})
-      .itIsReceivedAt('/handlers/msg')
+      .withSubscriber('deliveryTestMsg').at('/handlers/:type')
+      .whenSendingMessage({type: 'deliveryTestMsg'})
+      .itIsReceivedAt('/handlers/deliveryTestMsg')
       .run()
   })
 
   it ("Retries message delivery on failure", function*() {
-    this.timeout(5000)
+    this.timeout(2000)
     yield hubScenario.forHub()
-      .withSubscriber('msg', {
+      .withSubscriber('scheduleTestMsg', {
         status: 500, retrySchedule: [100, 200, 300]
       }).at('/handlers/:type')
-      .whenSendingMessage({type: 'msg'})
-      .itIsReceivedAt('/handlers/msg', {times: 5})
+      .whenSendingMessage({type: 'scheduleTestMsg'})
+      .itIsReceivedAt('/handlers/scheduleTestMsg', {times: 5})
       .withinSchedule(0, 100, 300, 600, 900)
       .run()
   })
@@ -35,24 +35,24 @@ describe('ServiceHub', function() {
   describe ("Concurrent messages", function() {
     it ("Sends up-to concurrency messages", function*() {
       yield hubScenario.forHub()
-        .withSubscriber('msg')
+        .withSubscriber('concurrencyTestMsg')
           .withConcurrency(5)
           .withResponseTaking(1000)
           .at('/handlers/:type')
-        .whenSendingMessage({type: 'msg'}, {times: 100})
-        .itIsReceivedAt('/handlers/msg', {times: 5})
+        .whenSendingMessage({type: 'concurrencyTestMsg'}, {times: 100})
+        .itIsReceivedAt('/handlers/concurrencyTestMsg', {times: 5})
         .after(100)
         .run()
     })
 
     it ("Sends up-to concurrency, even from multiple hub processes", function*() {
       yield hubScenario.forHub({instances: 2})
-        .withSubscriber('msg')
+        .withSubscriber('distributedConcurrencyTestMsg')
           .withConcurrency(6)
           .withResponseTaking(1000)
           .at('/handlers/:type')
-        .whenSendingMessage({type: 'msg'}, {times: 100})
-        .itIsReceivedAt('/handlers/msg', {times: 6})
+        .whenSendingMessage({type: 'distributedConcurrencyTestMsg'}, {times: 100})
+        .itIsReceivedAt('/handlers/distributedConcurrencyTestMsg', {times: 6})
         .after(100)
         .run()
     })

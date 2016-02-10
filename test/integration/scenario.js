@@ -127,6 +127,9 @@ class ScenarioBuilder {
   }
 
   *setupMocks() {
+    const maxRequests = 1e6
+    const me = this
+    const status = this.subscriber.options.status || 200
     var sub = this.subscriber
     var req = nock(this.subscriber.baseUrl)
       .filteringRequestBody((body) => {
@@ -134,10 +137,15 @@ class ScenarioBuilder {
         return body
       })
       .post(this.receivingPath)
-    if (this.receivingOptions.times)
-      req = req.times(this.receivingOptions.times)
-    req = req
-      .reply(this.subscriber.options.status || 200)
+      .times(maxRequests)
+      .reply(status, function(uri, req, cb) {
+        if (me.subscriber.responseTaking) {
+          setTimeout(function() {
+            cb(null, [status, "Delayed response"])
+          }, me.subscriber.responseTaking)
+        }
+        else cb(null, [status, "Response"])
+      })
       .log(_ => log.debug(_))
   }
 
