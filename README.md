@@ -15,6 +15,8 @@
 - ErrorHandler
 - DeadLetter storage
 - Archive storage (optional)
+- Inspector (inspects messages matching specific criteria and their handlers)
+- Bulk messages
 
 #### Example scenario
 

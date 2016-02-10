@@ -128,14 +128,17 @@ class ScenarioBuilder {
 
   *setupMocks() {
     var sub = this.subscriber
-    nock(this.subscriber.baseUrl)
-      .post(this.receivingPath)
-      .reply(this.subscriber.options.status || 200, (uri, body) => {
-        this.requestsMade.push({
-          uri: uri, body: body, ts: Date.now()
-        })
+    var req = nock(this.subscriber.baseUrl)
+      .filteringRequestBody((body) => {
+        this.requestsMade.push({ body: body, ts: Date.now() })
+        return body
       })
-      .log(_ => log.error(_))
+      .post(this.receivingPath)
+    if (this.receivingOptions.times)
+      req = req.times(this.receivingOptions.times)
+    req = req
+      .reply(this.subscriber.options.status || 200)
+      .log(_ => log.debug(_))
   }
 
   checkAssertions() {
@@ -148,15 +151,33 @@ class ScenarioBuilder {
 
     // Check schedule
     if (schedule && schedule.length) {
-      var threshold = 50
+      var threshold = 100, warmup = 100
       if (requests.length !== schedule.length) return
-      var scheduleRanges = schedule
-        .map(_ => [testStartTS + _, testStartTS + _ + threshold])
+      var scheduleRanges = schedule.reduce((acc, delay, index) => {
+        var last = acc[acc.length - 1]
+        var range = last
+          ? [this.testStartTS + delay, this.testStartTS + delay + threshold * index]
+          : [this.testStartTS, this.testStartTS + delay + warmup]
+        acc.push(range)
+        return acc
+      }, [])
       for (var i = 0; i < scheduleRanges.length; i++) {
         var requestTS = requests[i].ts
         var range = scheduleRanges[i]
         var fallsInRange = range[0] <= requestTS && requestTS <= range[1]
-        if (!fallsInRange) this.rejectFunction()
+        if (!fallsInRange) {
+          log.error({
+            scheduleRanges: scheduleRanges.map(r => ({
+              from: r[0], to: r[1],
+              delta: r[1] - r[0], fromStart: r[0] - this.testStartTS
+            })),
+            requests: requests.map(r => ({ ts: r.ts, fromStart: r.ts - this.testStartTS })),
+            startTS: this.testStartTS
+          }, "Invalid request ranges")
+          this.rejectFunction(
+            `#${i} ${requestTS} doesn't fall in [${range[0]}..${range[1]}]`
+          )
+        }
       }
       this.resolveFunction()
     }
@@ -169,7 +190,6 @@ class ScenarioBuilder {
   }
 
   *runTests() {
-    this.testStartTS = Date.now()
     this.checkAssertionsInterval = setInterval(() => this.checkAssertions(), 50)
     return this.testPromise
   }
@@ -181,6 +201,9 @@ class ScenarioBuilder {
     var Dispatcher = require('./../../lib/middlewares/dispatcher')
     var InQueue = require('./../../lib/middlewares/in_queue')
     var Delivery = require('./../../lib/middlewares/delivery')
+    var ErrorHandler = require('./../../lib/middlewares/error_handler')
+    var Scheduler = require('./../../lib/middlewares/scheduler')
+    var DeadLetter = require('./../../lib/middlewares/dead_letter')
     // Used for launching multiple hub instances
     var port = this.basePort + (options.instanceNumber || 0)
     return {
@@ -191,13 +214,16 @@ class ScenarioBuilder {
         { type: Dispatcher },
         { type: InQueue },
         { type: Delivery },
+        { type: Scheduler },
+        { type: ErrorHandler },
+        { type: DeadLetter },
       ]
     }
   }
 
   *run() {
     var manifest = this.buildManifest()
-    console.log(manifest)
+    log.debug({ manifest: manifest }, "Manifest generated")
     var numInstances = this.options.instances || 1
     this.hubs = []
     for (var i = 0; i < numInstances; i++) {
@@ -205,11 +231,11 @@ class ScenarioBuilder {
         manifest: manifest,
         config: this.buildConfig({instanceNumber: i})
       })
-      // console.log(hub.services)
       this.hubs.push(hub)
     }
     yield this.hubs.map(_ => _.run())
     yield this.setupMocks()
+    this.testStartTS = Date.now()
     yield this.sendMessages()
     return yield this.runTests()
   }

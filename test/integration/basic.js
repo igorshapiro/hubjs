@@ -21,12 +21,13 @@ describe('ServiceHub', function() {
   })
 
   it ("Retries message delivery on failure", function*() {
+    this.timeout(5000)
     yield hubScenario.forHub()
       .withSubscriber('msg', {
         status: 500, retrySchedule: [100, 200, 300]
       }).at('/handlers/:type')
       .whenSendingMessage({type: 'msg'})
-      .itIsReceivedAt('/handlers/msg')
+      .itIsReceivedAt('/handlers/msg', {times: 5})
       .withinSchedule(0, 100, 300, 600, 900)
       .run()
   })
