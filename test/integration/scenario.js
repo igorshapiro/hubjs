@@ -226,6 +226,8 @@ class ScenarioBuilder {
     var Scheduler = require('./../../lib/middlewares/scheduler')
     var DeadLetter = require('./../../lib/middlewares/dead_letter')
     var ConcurrencyManager = require('./../../lib/middlewares/concurrency_manager')
+    var LockManager = require('./../../lib/middlewares/lock_manager')
+
     // Used for launching multiple hub instances
     var port = this.basePort + (options.instanceNumber || 0)
     return {
@@ -240,6 +242,7 @@ class ScenarioBuilder {
         { type: ErrorHandler },
         { type: DeadLetter },
         { type: ConcurrencyManager, params: { pollingIntervalMillis: 100 } },
+        { type: LockManager },
       ]
     }
   }
