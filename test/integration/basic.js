@@ -45,15 +45,15 @@ describe('ServiceHub', function() {
         .run()
     })
 
-    it.only ("Sends up-to concurrency, even from multiple hub processes", function*() {
+    it ("Sends up-to concurrency, even from multiple hub processes", function*() {
       yield hubScenario.forHub({ instances: 2 })
         .withSubscriber('distributedConcurrencyTestMsg')
           .withConcurrency(6)
-          .withResponseTaking(1000)
+          .withResponseTaking(1500)
           .at('/handlers/:type')
         .whenSendingMessage({ type: 'distributedConcurrencyTestMsg' }, { times: 100 })
         .itIsReceivedAt('/handlers/distributedConcurrencyTestMsg', { times: 6 })
-        .after(100)
+        .after(500)
         .run()
     })
   })

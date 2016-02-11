@@ -4,8 +4,9 @@
 
 - WebServer
 - API
-- RegisterMessage (enqueue outgoing)
-- DispatchMessage (outgoing -> inputs)
+- OutQueue
+- Dispatcher (outgoing -> inputs)
+- InQueue
 - DeliverMessage (input -> service)
 - NewRelic
 - StatsD

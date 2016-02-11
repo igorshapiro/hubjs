@@ -159,7 +159,7 @@ class ScenarioBuilder {
 
     // Check schedule
     if (schedule && schedule.length) {
-      var threshold = 100, warmup = 100
+      var threshold = 200, warmup = 200
       if (requests.length !== schedule.length) return
       var scheduleRanges = schedule.reduce((acc, delay, index) => {
         var last = acc[acc.length - 1]
@@ -225,6 +225,7 @@ class ScenarioBuilder {
     var ErrorHandler = require('./../../lib/middlewares/error_handler')
     var Scheduler = require('./../../lib/middlewares/scheduler')
     var DeadLetter = require('./../../lib/middlewares/dead_letter')
+    var ConcurrencyManager = require('./../../lib/middlewares/concurrency_manager')
     // Used for launching multiple hub instances
     var port = this.basePort + (options.instanceNumber || 0)
     return {
@@ -238,6 +239,7 @@ class ScenarioBuilder {
         { type: Scheduler },
         { type: ErrorHandler },
         { type: DeadLetter },
+        { type: ConcurrencyManager, params: { pollingIntervalMillis: 100 } },
       ]
     }
   }
