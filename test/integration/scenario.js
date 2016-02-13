@@ -192,20 +192,25 @@ class ScenarioBuilder {
       return
     }
 
+    var predicate = this.predicate || () => {
+      var expectedRequestsCount = this.receivingOptions.times || 1
+      return {
+        passed: requests.length === expectedRequestsCount,
+        error: `Expected ${expectedRequestsCount}, but got ${requests.length}`
+      }
+    }
+
+    var predicateResult = predicate(this)
     // Check simple requests count
-    var expectedRequestsCount = this.receivingOptions.times || 1
-    var requestCountsMatch = requests.length === expectedRequestsCount
     if (this.afterMillis) {
-      if (requestCountsMatch) {
+      if (predicateResult.passed) {
         this.resolveFunction()
       }
       else {
-        this.rejectFunction(new Error(
-          `Expected ${expectedRequestsCount}, but got ${requests.length}`
-        ))
+        this.rejectFunction(new Error(predicateResult.error))
       }
     }
-    else if (requestCountsMatch) {
+    else if (predicateResult.passed) {
       this.resolveFunction()
     }
   }
@@ -247,7 +252,12 @@ class ScenarioBuilder {
     }
   }
 
-  *run() {
+  withPredicate(predicate) {
+    this.predicate = predicate
+    return this
+  }
+
+  *run(options) {
     var manifest = this.buildManifest()
     log.debug({ manifest: manifest }, "Manifest generated")
     var numInstances = this.options.instances || 1
