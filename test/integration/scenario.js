@@ -232,6 +232,7 @@ class ScenarioBuilder {
     var DeadLetter = require('./../../lib/middlewares/dead_letter')
     var ConcurrencyManager = require('./../../lib/middlewares/concurrency_manager')
     var LockManager = require('./../../lib/middlewares/lock_manager')
+    var StatsReporter = require('./../../lib/middlewares/stats_reporter')
 
     // Used for launching multiple hub instances
     var port = this.basePort + (options.instanceNumber || 0)
@@ -248,6 +249,7 @@ class ScenarioBuilder {
         { type: DeadLetter },
         { type: ConcurrencyManager, params: { pollingIntervalMillis: 100 } },
         { type: LockManager },
+        { type: StatsReporter }
       ]
     }
   }

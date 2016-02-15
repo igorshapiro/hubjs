@@ -13,5 +13,5 @@ global.log = bunyan.createLogger({
     { stream: process.stdout }
   ]
 })
-var StatsD = require('node-statsd')
-global.stats = new StatsD()
+// var StatsD = require('node-statsd')
+// global.stats = new StatsD()
