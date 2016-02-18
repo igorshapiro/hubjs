@@ -71,6 +71,12 @@ class ScenarioBuilder {
     return this.subscriber = new SubscriberBuilder(this, msgType, options)
   }
 
+  whenRegisteringRecurringMessage(msg, options) {
+    this.recurringMsg = msg
+    this.recurringMsgOptions = options
+    return this
+  }
+
   whenSendingMessage(msg, options) {
     this.message = msg
     this.messageOptions = options || {}
@@ -97,19 +103,34 @@ class ScenarioBuilder {
     var publisher = {
       publishes: [this.subscriber.msgType]
     }
-    var pubName = shortid.generate()
+    this.pubName = shortid.generate()
 
     var subscriber = this.subscriber.buildManifest()
-    var subName = shortid.generate()
+    this.subName = shortid.generate()
 
     var manifest = {}
-    manifest[pubName] = publisher
-    manifest[subName] = subscriber
+    manifest[this.pubName] = publisher
+    manifest[this.subName] = subscriber
 
     return manifest
   }
 
+  *registerRecurringMessages() {
+    if (!this.recurringMsg) return
+
+    var recurringEndpoint = `${this.hubBase}/api/v1/services/${this.subName}/recurring`
+    var response = yield request.postAsync({
+      url: recurringEndpoint,
+      json: true,
+      body: this.recurringMsg
+    })
+
+    this.handleAPICallError(recurringEndpoint, response)
+  }
+
   *sendMessages() {
+    if (!this.message) return
+
     var messagesEndpoint = `${this.hubBase}/api/v1/messages`
     var times = this.messageOptions.times || 1
     for (var i = 0; i < times; i++) {
@@ -118,12 +139,15 @@ class ScenarioBuilder {
         json: true,
         body: this.message
       })
-
-      var status = response.statusCode
-      if (status !== 204) throw new Error(
-        `POST ${messagesEndpoint} responded with ${status}`
-      )
     }
+    this.handleAPICallError(messagesEndpoint, response)
+  }
+
+  handleAPICallError(endpoint, response) {
+    var status = response.statusCode
+    if (status !== 204) throw new Error(
+      `POST ${endpoint} responded with ${status}`
+    )
   }
 
   *setupMocks() {
@@ -160,7 +184,14 @@ class ScenarioBuilder {
     // Check schedule
     if (schedule && schedule.length) {
       var threshold = 200, warmup = 200
-      if (requests.length !== schedule.length) return
+      if (requests.length !== schedule.length) {
+        if (this.afterMillis) {
+          this.rejectFunction(new Error(`Expected ${schedule.length} requests, but received ${requests.length}`))
+        }
+        else {
+          return
+        }
+      }
       var scheduleRanges = schedule.reduce((acc, delay, index) => {
         var last = acc[acc.length - 1]
         var range = last
@@ -233,6 +264,7 @@ class ScenarioBuilder {
     var ConcurrencyManager = require('./../../lib/middlewares/concurrency_manager')
     var LockManager = require('./../../lib/middlewares/lock_manager')
     var StatsReporter = require('./../../lib/middlewares/stats_reporter')
+    var Recurring = require('./../../lib/middlewares/recurring')
 
     // Used for launching multiple hub instances
     var port = this.basePort + (options.instanceNumber || 0)
@@ -249,7 +281,8 @@ class ScenarioBuilder {
         { type: DeadLetter },
         { type: ConcurrencyManager, params: { pollingIntervalMillis: 100 } },
         { type: LockManager },
-        { type: StatsReporter }
+        { type: StatsReporter },
+        { type: Recurring, params: { pollingIntervalMillis: 50 } }
       ]
     }
   }
@@ -274,6 +307,7 @@ class ScenarioBuilder {
     yield this.hubs.map(_ => _.run())
     yield this.setupMocks()
     this.testStartTS = Date.now()
+    yield this.registerRecurringMessages()
     yield this.sendMessages()
     return yield this.runTests()
   }

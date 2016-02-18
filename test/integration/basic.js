@@ -31,6 +31,21 @@ describe('ServiceHub', function() {
       .run()
   })
 
+  describe ("Recurring messages", function() {
+    it.only ("Schedules message every specified time", function*() {
+      yield hubScenario.forHub()
+        .withSubscriber('recurringMsg', { status: 200 }).at('/handlers/:type')
+        .whenRegisteringRecurringMessage({
+          type: 'recurringMsg',
+          deliverEveryMillis: 100
+        })
+        .itIsReceivedAt('/handlers/recurringMsg', {times: 4})
+        .withinSchedule(0, 100, 200, 300)
+        .after(400)
+        .run()
+    })
+  })
+
   describe ("Concurrent messages", function() {
     it ("Sends up-to concurrency messages", function*() {
       yield hubScenario.forHub()

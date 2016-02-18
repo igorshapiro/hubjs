@@ -4,15 +4,15 @@
   "license": "MIT",
   "dependencies": {
     "amqplib": "0.4.1",
-    "bluebird": "3.2.2",
-    "bunyan": "1.5.1",
+    "bluebird": "3.3.1",
+    "bunyan": "1.6.0",
     "co": "4.6.0",
     "forever-agent": "0.6.1",
     "koa": "1.1.2",
     "koa-body": "^1.4.0",
-    "koa-router": "^5.3.0",
+    "koa-router": "^5.4.0",
     "lodash": "4.3.0",
-    "mongodb": "^2.1.6",
+    "mongodb": "^2.1.7",
     "newrelic": "1.25.1",
     "node-statsd": "0.1.1",
     "number-timespans": "1.0.0",
@@ -30,7 +30,7 @@
     "nock": "^7.0.2",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
-    "supertest": "^1.1.0"
+    "supertest": "^1.2.0"
   },
   "scripts": {
     "test": "mocha test",
