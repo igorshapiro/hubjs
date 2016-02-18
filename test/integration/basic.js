@@ -32,7 +32,7 @@ describe('ServiceHub', function() {
   })
 
   describe ("Recurring messages", function() {
-    it.only ("Schedules message every specified time", function*() {
+    it ("Schedules message every specified time", function*() {
       yield hubScenario.forHub()
         .withSubscriber('recurringMsg', { status: 200 }).at('/handlers/:type')
         .whenRegisteringRecurringMessage({
