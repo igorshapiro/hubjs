@@ -108,9 +108,10 @@ class ScenarioBuilder {
     var subscriber = this.subscriber.buildManifest()
     this.subName = shortid.generate()
 
-    var manifest = {}
-    manifest[this.pubName] = publisher
-    manifest[this.subName] = subscriber
+    var services = {}
+    services[this.pubName] = publisher
+    services[this.subName] = subscriber
+    var manifest = { services: services }
 
     return manifest
   }
