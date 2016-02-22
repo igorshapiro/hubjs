@@ -18,6 +18,7 @@ var ConcurrencyManager = require('./../lib/middlewares/concurrency_manager')
 var LockManager = require('./../lib/middlewares/lock_manager')
 var StatsReporter = require('./../lib/middlewares/stats_reporter')
 var Recurring = require('./../lib/middlewares/recurring')
+var Processing = require('./../lib/middlewares/processing')
 
 module.exports = {
   newrelic: false,
@@ -34,6 +35,7 @@ module.exports = {
     { type: ConcurrencyManager },
     { type: LockManager },
     { type: StatsReporter },
-    { type: Recurring }
+    { type: Recurring },
+    { type: Processing },
   ]
 }
