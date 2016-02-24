@@ -52,9 +52,18 @@ npm start
 curl -X /api/v1/messages
 ```
 
-# Design
+# Development
 
-## Middlewares
+Can use node v4+
+
+```sh
+brew install redis mongodb rabbitmq
+npm install -g nodemon ember-cli
+```
+
+## Design
+
+### Middlewares
 
 - WebServer
 - API
