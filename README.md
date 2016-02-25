@@ -81,3 +81,17 @@ npm install -g nodemon ember-cli
 - Archive storage (optional)
 - Inspector (inspects messages matching specific criteria and their handlers)
 - Bulk messages
+
+# Examples
+
+## Example API calls
+
+Register recurring message
+```sh
+curl -X POST -H"Content-Type: application/json" http://localhost:8080/api/v1/services/sub/recurring -d '{"type": "recurring", "deliverEveryMillis": 1000}'
+```
+
+Unregister recurring message
+```sh
+curl -X DELETE http://localhost:8080/api/v1/services/sub/recurring/recurring
+```

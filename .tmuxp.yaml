@@ -3,4 +3,4 @@ windows:
   - window_name: hub
     panes:
       - nodemon ./lib/boot.js | bunyan
-      - cd ui && ember s --proxy http://localhost:8080
+      - cd ../hubjs-ui && ember s --proxy http://localhost:8080
