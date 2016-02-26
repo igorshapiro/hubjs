@@ -20,7 +20,8 @@
     "redlock": "^1.0.0",
     "request": "2.69.0",
     "shortid": "2.2.4",
-    "string": "^3.3.1"
+    "string": "^3.3.1",
+    "hubjs-ui": "igorshapiro/hubjs-ui"
   },
   "devDependencies": {
     "chai": "^3.5.0",

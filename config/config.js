@@ -19,6 +19,7 @@ var LockManager = require('./../lib/middlewares/lock_manager')
 var StatsReporter = require('./../lib/middlewares/stats_reporter')
 var Recurring = require('./../lib/middlewares/recurring')
 var Processing = require('./../lib/middlewares/processing')
+var UI = require('hubjs-ui')
 
 module.exports = {
   newrelic: false,
@@ -37,5 +38,6 @@ module.exports = {
     { type: StatsReporter },
     { type: Recurring },
     { type: Processing },
+    { type: UI }
   ]
 }
