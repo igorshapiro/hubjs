@@ -264,7 +264,6 @@ class ScenarioBuilder {
     var DeadLetter = require('./../../lib/middlewares/dead_letter')
     var ConcurrencyManager = require('./../../lib/middlewares/concurrency_manager')
     var LockManager = require('./../../lib/middlewares/lock_manager')
-    var StatsReporter = require('./../../lib/middlewares/stats_reporter')
     var Recurring = require('./../../lib/middlewares/recurring')
     var Processing = require('./../../lib/middlewares/processing')
 
@@ -283,7 +282,6 @@ class ScenarioBuilder {
         { type: DeadLetter },
         { type: ConcurrencyManager, params: { pollingIntervalMillis: 100 } },
         { type: LockManager },
-        { type: StatsReporter },
         { type: Recurring, params: { pollingIntervalMillis: 50 } },
         { type: Processing },
       ]

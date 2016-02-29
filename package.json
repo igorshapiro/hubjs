@@ -7,7 +7,8 @@
     "bluebird": "3.3.1",
     "bunyan": "1.6.0",
     "co": "4.6.0",
-    "forever-agent": "0.6.1",
+    "forever-agent": "^0.6.1",
+    "hubjs-ui": "igorshapiro/hubjs-ui",
     "koa": "1.1.2",
     "koa-body": "^1.4.0",
     "koa-router": "^5.4.0",
@@ -20,8 +21,7 @@
     "redlock": "^1.0.0",
     "request": "2.69.0",
     "shortid": "2.2.4",
-    "string": "^3.3.1",
-    "hubjs-ui": "igorshapiro/hubjs-ui"
+    "string": "^3.3.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
