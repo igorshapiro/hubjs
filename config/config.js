@@ -38,6 +38,6 @@ module.exports = {
     { type: StatsReporter },
     { type: Recurring },
     { type: Processing },
-    { type: UI }
+    { type: UI, params: { username: "hub", password: "hub" } }
   ]
 }
