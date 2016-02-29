@@ -3,7 +3,6 @@ require('number-timespans')
 global.Middleware = require('./../lib/middlewares/middleware')
 
 global.config = require('./config')
-if (config.newrelic) require('newrelic')
 
 var bunyan = require('bunyan')
 global.log = bunyan.createLogger({

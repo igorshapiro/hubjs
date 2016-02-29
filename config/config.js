@@ -1,5 +1,6 @@
 "use strict"
 
+require('newrelic')
 var Bluebird = require('bluebird')
 Bluebird.config({
   longStackTraces: true,
@@ -22,7 +23,6 @@ var Processing = require('./../lib/middlewares/processing')
 var UI = require('hubjs-ui')
 
 module.exports = {
-  newrelic: false,
   middlewares: [
     { type: WebServer, params: { port: 8080 } },
     { type: API },
