@@ -6,7 +6,7 @@ var Hub = require('./../../lib/hub/hub')
 var bluebird = require('bluebird')
 const EventEmitter = require('events')
 
-describe.only("Inspector", function() {
+describe("Inspector", function() {
   var service, inspector
   var hub = new Hub({manifest: {}})
 
@@ -19,35 +19,55 @@ describe.only("Inspector", function() {
     })
   })
 
-  function testSubscription(middleware, msgType, name) {
-    return function*() {
-      var emitter = new EventEmitter()
-      inspector[name] = emitter
+  describe("Handle", function() {
+    it ("matchers", function() {
+      var msg = {type: 'done', num: 4}
+      inspector.setMatchers(["this.type === 'done' && this.num < 10"])
+      inspector.logEvent = sinon.spy()
+      inspector.handle('some_type', msg)
 
-      var spy = sinon.spy()
-      inspector.handle = spy
-      var msg = { id: shortid.generate() }
+      expect(inspector.logEvent).to.have.been.calledWith('some_type', msg)
+    })
 
-      yield inspector.initialize()
-      emitter.emit(msgType, msg)
+    it ("doesn't match", function() {
+      inspector.setMatchers(["this.type === 'done'"])
+      inspector.logEvent = sinon.spy()
+      inspector.handle('some_type', {type: 'not_done'})
 
+      expect(inspector.logEvent).to.not.have.been.called
+    })
+  })
 
-      expect(spy).to.have.been.calledWith(msgType, msg)
+  describe("Subscription", function() {
+    function testSubscription(middleware, msgType, name) {
+      return function*() {
+        var emitter = new EventEmitter()
+        inspector[name] = emitter
+
+        var spy = sinon.spy()
+        inspector.handle = spy
+        var ev = { id: shortid.generate() }
+
+        yield inspector.initialize()
+        emitter.emit(msgType, ev)
+
+        expect(spy).to.have.been.calledWith(msgType, ev)
+      }
     }
-  }
 
-  var eventTypes = [
-    { mw: "dispatcher", name: "dispatcher", type: "message_dispatched" },
-    { mw: "delivery", name: "delivery", type: "delivered" },
-    { mw: "dead_letter", name: "deadLetter", type: "killed" },
-    { mw: "scheduler", name: "scheduler", type: "scheduled" },
-    { mw: "scheduler", name: "scheduler", type: "enqueued" },
-    { mw: "api", name: "api", type: "accepted" },
-  ]
+    var eventTypes = [
+      { mw: "dispatcher", name: "dispatcher", type: "message_dispatched" },
+      { mw: "delivery", name: "delivery", type: "delivered" },
+      { mw: "dead_letter", name: "deadLetter", type: "killed" },
+      { mw: "scheduler", name: "scheduler", type: "scheduled" },
+      { mw: "scheduler", name: "scheduler", type: "enqueued" },
+      { mw: "api", name: "api", type: "accepted" },
+    ]
 
-  for (var eventType of eventTypes) {
-    it (`Subscribes to ${eventType.mw}.${eventType.type}`,
-      testSubscription(eventType.mw, eventType.type, eventType.name)
-    )
-  }
+    for (var eventType of eventTypes) {
+      it (`Subscribes to ${eventType.mw}.${eventType.type}`,
+        testSubscription(eventType.mw, eventType.type, eventType.name)
+      )
+    }
+  })
 })

@@ -21,6 +21,7 @@ var StatsReporter = require('./../lib/middlewares/stats_reporter')
 var Recurring = require('./../lib/middlewares/recurring')
 var Processing = require('./../lib/middlewares/processing')
 var Monitor = require('./../lib/middlewares/monitor')
+var Inspector = require('./../lib/middlewares/inspector')
 var UI = require('hubjs-ui')
 
 module.exports = {
@@ -40,6 +41,7 @@ module.exports = {
     { type: Recurring },
     { type: Processing },
     { type: Monitor },
-    { type: UI, params: { username: "hub", password: "hub" } }
+    { type: Inspector },
+    // { type: UI, params: { username: "hub", password: "hub" } }
   ]
 }
