@@ -22,7 +22,7 @@ describe("Inspector", function() {
   describe("Handle", function() {
     it ("matchers", function() {
       var msg = {type: 'done', num: 4}
-      inspector.setMatchers(["this.type === 'done' && this.num < 10"])
+      inspector.setMatchers(["ctx.type === 'done' && ctx.num < 10"])
       inspector.logEvent = sinon.spy()
       inspector.handle('some_type', msg)
 
@@ -30,7 +30,7 @@ describe("Inspector", function() {
     })
 
     it ("doesn't match", function() {
-      inspector.setMatchers(["this.type === 'done'"])
+      inspector.setMatchers(["ctx.type === 'done'"])
       inspector.logEvent = sinon.spy()
       inspector.handle('some_type', {type: 'not_done'})
 
