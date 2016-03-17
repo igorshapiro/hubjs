@@ -256,7 +256,6 @@ class ScenarioBuilder {
     var WebServer = require('./../../lib/middlewares/web_server')
     var API = require('./../../lib/middlewares/api')
     var OutQueue = require('./../../lib/middlewares/out_queue')
-    var Dispatcher = require('./../../lib/middlewares/dispatcher')
     var InQueue = require('./../../lib/middlewares/in_queue')
     var Delivery = require('./../../lib/middlewares/delivery')
     var ErrorHandler = require('./../../lib/middlewares/error_handler')
@@ -274,7 +273,6 @@ class ScenarioBuilder {
         { type: WebServer, params: { port: port } },
         { type: API },
         { type: OutQueue },
-        { type: Dispatcher },
         { type: InQueue },
         { type: Delivery },
         { type: Scheduler },
