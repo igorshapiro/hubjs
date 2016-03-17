@@ -68,7 +68,6 @@ npm install -g nodemon ember-cli
 - WebServer
 - API
 - OutQueue
-- Dispatcher (outgoing -> inputs)
 - InQueue
 - DeliverMessage (input -> service)
 - NewRelic
@@ -86,9 +85,20 @@ npm install -g nodemon ember-cli
 
 ## Example API calls
 
+Publish a message
+```sh
+curl -X POST \
+  -H"Content-Type: application/json" \
+  http://localhost:8080/api/v1/api/messages \
+  -d '{"type": "pricing_changed", "content": {}}'
+```
+
 Register recurring message
 ```sh
-curl -X POST -H"Content-Type: application/json" http://localhost:8080/api/v1/services/sub/recurring -d '{"type": "recurring", "deliverEveryMillis": 1000}'
+curl -X POST \
+  -H"Content-Type: application/json" \
+  http://localhost:8080/api/v1/services/sub/recurring \
+  -d '{"type": "recurring", "deliverEveryMillis": 1000}'
 ```
 
 Unregister recurring message
