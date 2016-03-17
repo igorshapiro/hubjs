@@ -147,7 +147,7 @@ class ScenarioBuilder {
   handleAPICallError(endpoint, response) {
     var status = response.statusCode
     if (status !== 204) throw new Error(
-      `POST ${endpoint} responded with ${status}`
+      `POST ${endpoint} responded with ${status}:\r\n${response.body}`
     )
   }
 
