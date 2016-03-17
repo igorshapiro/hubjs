@@ -56,7 +56,6 @@ describe("Inspector", function() {
     }
 
     var eventTypes = [
-      { mw: "dispatcher", name: "dispatcher", type: "message_dispatched" },
       { mw: "delivery", name: "delivery", type: "delivered" },
       { mw: "dead_letter", name: "deadLetter", type: "killed" },
       { mw: "scheduler", name: "scheduler", type: "scheduled" },
