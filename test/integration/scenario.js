@@ -146,7 +146,7 @@ class ScenarioBuilder {
 
   handleAPICallError(endpoint, response) {
     var status = response.statusCode
-    if (status !== 204) throw new Error(
+    if (status !== 201) throw new Error(
       `POST ${endpoint} responded with ${status}:\r\n${response.body}`
     )
   }
@@ -265,6 +265,7 @@ class ScenarioBuilder {
     var LockManager = require('./../../lib/middlewares/lock_manager')
     var Recurring = require('./../../lib/middlewares/recurring')
     var Processing = require('./../../lib/middlewares/processing')
+    var Archive = require('./../../lib/middlewares/archive')
 
     // Used for launching multiple hub instances
     var port = this.basePort + (options.instanceNumber || 0)
@@ -275,13 +276,14 @@ class ScenarioBuilder {
         { type: OutQueue },
         { type: InQueue },
         { type: Delivery },
-        { type: Scheduler },
+        { type: Scheduler, params: { pollingIntervalMillis: 50 } },
         { type: ErrorHandler },
         { type: DeadLetter },
         { type: ConcurrencyManager, params: { pollingIntervalMillis: 100 } },
         { type: LockManager },
         { type: Recurring, params: { pollingIntervalMillis: 50 } },
         { type: Processing },
+        { type: Archive }
       ]
     }
   }
