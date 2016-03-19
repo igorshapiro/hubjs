@@ -276,7 +276,7 @@ class ScenarioBuilder {
         { type: OutQueue },
         { type: InQueue },
         { type: Delivery },
-        { type: Scheduler },
+        { type: Scheduler, params: { pollingIntervalMillis: 50 } },
         { type: ErrorHandler },
         { type: DeadLetter },
         { type: ConcurrencyManager, params: { pollingIntervalMillis: 100 } },
