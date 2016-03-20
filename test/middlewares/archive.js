@@ -1,7 +1,6 @@
 "use strict"
 
 var Archive = require('./../../lib/middlewares/archive')
-var Bluebird = require('bluebird')
 
 var Hub = require('./../../lib/hub/hub')
 var shortid = require('shortid')
@@ -18,20 +17,44 @@ function createTestMiddleware(Klass) {
   })
 }
 
-describe("Archive", function() {
-  describe("logAcceptedMessage", function() {
-    var archive
+describe.only("Archive", function() {
+  var archive
+  beforeEach(function*() {
+    archive = createTestMiddleware(Archive)
+    archive.inQueue = new TestEmitter()
+  })
+
+  describe("replay", function() {
+    var enqueue
     beforeEach(function*() {
-      archive = createTestMiddleware(Archive)
-      archive.inQueue = new TestEmitter()
+      enqueue = sinon.spy()
+      archive.inQueue.enqueue = function*(msg) {
+        enqueue(msg)
+      }
+      yield archive.initialize()
     })
 
+    it("does not enqueue messages before specified timestamp", function*() {
+      var ts = new Date()
+      yield archive.logAcceptedMessage({ msg: {a: 1} }, ts)
+      yield archive.replay(new Date(ts.getTime() + 1))
+      expect(enqueue).to.not.have.been.called
+    })
+
+    it("enqueues all messages after specified timestamp", function*() {
+      var ts = new Date()
+      yield archive.logAcceptedMessage({ msg: {a: 1}}, ts)
+      yield archive.replay(new Date(ts.getTime() - 1))
+      expect(enqueue).to.have.been.calledWithMatch({a: 1})
+    })
+  })
+
+  describe("logAcceptedMessage", function() {
     describe("Message expiration", function() {
       it("expires messages after expireAfterSeconds", function*() {
         yield archive.initialize()
 
-        archive.logAcceptedMessage({ msg: { a: 1 } })
-        yield Bluebird.delay(100)
+        yield archive.logAcceptedMessage({ msg: { a: 1 } })
 
         expect(yield archive.getCount()).to.equal(1)
         var messages = yield archive.getMessages()
