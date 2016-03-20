@@ -110,6 +110,11 @@ describe("Archive", function() {
         expect(archive.collection.insert).to.not.have.been.called
       })
 
+      it ("not called if msg has archivedAt", function*() {
+        archive.logAcceptedMessage({msg: {archivedAt: 123}})
+        expect(archive.collection.insert).to.not.have.been.called
+      })
+
       it ("not called if msg is a retry", function*() {
         archive.logAcceptedMessage({msg: {attemptsMade: 1}})
         expect(archive.collection.insert).to.not.have.been.called
