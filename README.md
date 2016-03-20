@@ -98,7 +98,7 @@ Replay messages
 ```sh
 curl -X POST \
   -H"Content-Type: application/json" \
-  http://localhost:8080/api/v1/services/sub/archive
+  http://localhost:8080/api/v1/services/sub/archive \
   -d '{"from": 0}'
 ```
 

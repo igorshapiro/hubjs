@@ -17,7 +17,7 @@ function createTestMiddleware(Klass) {
   })
 }
 
-describe.only("Archive", function() {
+describe("Archive", function() {
   var archive
   beforeEach(function*() {
     archive = createTestMiddleware(Archive)
