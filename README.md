@@ -93,6 +93,15 @@ curl -X POST \
   -d '{"type": "pricing_changed", "content": {}}'
 ```
 
+Replay messages
+
+```sh
+curl -X POST \
+  -H"Content-Type: application/json" \
+  http://localhost:8080/api/v1/services/sub/archive \
+  -d '{"from": 0}'
+```
+
 Register recurring message
 ```sh
 curl -X POST \
