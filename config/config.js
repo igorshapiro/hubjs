@@ -41,7 +41,7 @@ module.exports = {
     { type: Processing },
     { type: Monitor },
     { type: Inspector },
-    { type: Archive },
+    { type: Archive, params: { secondsInChunk: 5 } },
     // { type: UI, params: { username: "hub", password: "hub" } }
   ]
 }
