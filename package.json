@@ -4,6 +4,8 @@
   "license": "MIT",
   "dependencies": {
     "amqplib": "0.4.1",
+    "aws-promised": "^2.12.0",
+    "aws-sdk": "^2.2.45",
     "bluebird": "3.3.4",
     "bunyan": "1.8.0",
     "co": "4.6.0",
