@@ -1,15 +1,18 @@
 require('number-timespans')
 
+global.Middleware = require('./../lib/middlewares/middleware')
+
 global.config = require('./config')
-if (config.newrelic) require('newrelic')
 
 var bunyan = require('bunyan')
 global.log = bunyan.createLogger({
   name: "service_hub",
   serializers: bunyan.stdSerializers,
-  streams: [{
-    path: __dirname + '/../hub.log'
-  }]
+  level: 'info',
+  streams: [
+    { path: __dirname + '/../hub.log' },
+    { stream: process.stdout }
+  ]
 })
-var StatsD = require('node-statsd')
-global.stats = new StatsD()
+// var StatsD = require('node-statsd')
+// global.stats = new StatsD()

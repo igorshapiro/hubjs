@@ -1,14 +1,14 @@
-global.chai = require('chai')
-global.expect = chai.expect
+require('./../config/init')
 
-chai.use(require('./helpers/expect-plugin'))
+global.chai = require('chai')
+global.sinon = require('sinon')
+var sinonChai = require('sinon-chai')
+global.expect = chai.expect
+chai.use(sinonChai)
+
 chai.use(require('chai-as-promised'))
 
-global.request = require('supertest')
-global.Hub = require('../lib/hub')
 global.nock = require('nock')
-global.hubClient = require('./helpers/hub_client')
-global.hubHelpers = require('./helpers/hub')
 global.co = require('co')
 global._ = require('lodash')
 require('./test_helper')()
