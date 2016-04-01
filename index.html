@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>HubJS by igorshapiro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">HubJS</h1>
+      <h2 class="project-tagline">Messaging for microservices/SOA</h2>
+      <a href="https://github.com/igorshapiro/hubjs" class="btn">View on GitHub</a>
+      <a href="https://github.com/igorshapiro/hubjs/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/igorshapiro/hubjs/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="deployment" class="anchor" href="#deployment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Deployment</h3>
+
+<div class="highlight highlight-source-shell"><pre>git clone https://github.com/igorshapiro/hubjs.git hubjs</pre></div>
+
+<h3>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuration</h3>
+
+<p>Create <code>services.json</code> file in the root of the cloned directory:</p>
+
+<div class="highlight highlight-source-json"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>services<span class="pl-pds">"</span></span>: {
+    <span class="pl-s"><span class="pl-pds">"</span>pub<span class="pl-pds">"</span></span>: {
+      <span class="pl-s"><span class="pl-pds">"</span>publishes<span class="pl-pds">"</span></span>: [<span class="pl-s"><span class="pl-pds">"</span>load_test<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pricing_changed<span class="pl-pds">"</span></span>],
+      <span class="pl-s"><span class="pl-pds">"</span>concurrency<span class="pl-pds">"</span></span>: <span class="pl-c1">100</span>
+    },
+    <span class="pl-s"><span class="pl-pds">"</span>sub<span class="pl-pds">"</span></span>: {
+      <span class="pl-s"><span class="pl-pds">"</span>subscribes<span class="pl-pds">"</span></span>: [<span class="pl-s"><span class="pl-pds">"</span>load_test<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pricing_changed<span class="pl-pds">"</span></span>],
+      <span class="pl-s"><span class="pl-pds">"</span>endpoint<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>http://localhost:3100/:type<span class="pl-pds">"</span></span>,
+      <span class="pl-s"><span class="pl-pds">"</span>concurrency<span class="pl-pds">"</span></span>: <span class="pl-c1">100</span>
+    }
+  }
+}</pre></div>
+
+<p>The file is an object with <code>service name</code>s as keys and <code>service configurations</code> as values. The following options are used in service configuration:</p>
+
+<ul>
+<li>
+<code>concurrency</code> - How many concurrent messages can a service accept.</li>
+<li>
+<code>publishes</code> - Types of messages that the service is publishing (message can't have more than one publisher)</li>
+<li>
+<code>subscribes</code> - Types of messages that the service is subscribed to</li>
+<li>
+<code>endpoint</code> - the HTTP endpoint that accepts the messages. Message is delivered via HTTP POST request. Endpoint can use wildcards:
+
+<ul>
+<li>
+<code>:type</code> - message type</li>
+<li>
+<code>:env</code> - environment, TBD</li>
+</ul>
+</li>
+<li>
+<code>queue</code> - queue url (currently only <code>rabbitmq://</code> supported )</li>
+<li>
+<code>intermediate</code> - intermediate storage url (used for concurrency coordination, processing storage, etc.). Currently only <code>redis://</code> supported.</li>
+<li>
+<code>storage</code> - long-term storage url (recurring messages, dead letter, messages archive, etc.). Only <code>mongodb://</code> supported</li>
+</ul>
+
+<h3>
+<a id="running" class="anchor" href="#running" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running</h3>
+
+<div class="highlight highlight-source-shell"><pre>npm start</pre></div>
+
+<h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>API</h2>
+
+<h3>
+<a id="publishing-a-message" class="anchor" href="#publishing-a-message" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Publishing a message</h3>
+
+<div class="highlight highlight-source-shell"><pre>curl -X /api/v1/messages</pre></div>
+
+<h1>
+<a id="development" class="anchor" href="#development" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Development</h1>
+
+<p>Can use node v4+</p>
+
+<div class="highlight highlight-source-shell"><pre>brew install redis mongodb rabbitmq
+npm install -g nodemon ember-cli</pre></div>
+
+<h2>
+<a id="design" class="anchor" href="#design" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Design</h2>
+
+<h3>
+<a id="middlewares" class="anchor" href="#middlewares" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Middlewares</h3>
+
+<ul>
+<li>WebServer</li>
+<li>API</li>
+<li>OutQueue</li>
+<li>InQueue</li>
+<li>DeliverMessage (input -&gt; service)</li>
+<li>NewRelic</li>
+<li>StatsD</li>
+<li>Processing storage</li>
+<li>LoadBalancer (concurrency manager)</li>
+<li>Scheduler</li>
+<li>ErrorHandler</li>
+<li>DeadLetter storage</li>
+<li>Archive storage (optional)</li>
+<li>Inspector (inspects messages matching specific criteria and their handlers)</li>
+<li>Bulk messages</li>
+</ul>
+
+<h1>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h1>
+
+<h2>
+<a id="example-api-calls" class="anchor" href="#example-api-calls" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example API calls</h2>
+
+<p>Publish a message</p>
+
+<div class="highlight highlight-source-shell"><pre>curl -X POST \
+  -H<span class="pl-s"><span class="pl-pds">"</span>Content-Type: application/json<span class="pl-pds">"</span></span> \
+  http://localhost:8080/api/v1/api/messages \
+  -d <span class="pl-s"><span class="pl-pds">'</span>{"type": "pricing_changed", "content": {}}<span class="pl-pds">'</span></span></pre></div>
+
+<p>Replay messages</p>
+
+<div class="highlight highlight-source-shell"><pre>curl -X POST \
+  -H<span class="pl-s"><span class="pl-pds">"</span>Content-Type: application/json<span class="pl-pds">"</span></span> \
+  http://localhost:8080/api/v1/services/sub/archive \
+  -d <span class="pl-s"><span class="pl-pds">'</span>{"from": 0}<span class="pl-pds">'</span></span></pre></div>
+
+<p>Register recurring message</p>
+
+<div class="highlight highlight-source-shell"><pre>curl -X POST \
+  -H<span class="pl-s"><span class="pl-pds">"</span>Content-Type: application/json<span class="pl-pds">"</span></span> \
+  http://localhost:8080/api/v1/services/sub/recurring \
+  -d <span class="pl-s"><span class="pl-pds">'</span>{"type": "recurring", "deliverEveryMillis": 1000}<span class="pl-pds">'</span></span></pre></div>
+
+<p>Unregister recurring message</p>
+
+<div class="highlight highlight-source-shell"><pre>curl -X DELETE http://localhost:8080/api/v1/services/sub/recurring/recurring</pre></div>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/igorshapiro/hubjs">HubJS</a> is maintained by <a href="https://github.com/igorshapiro">igorshapiro</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
