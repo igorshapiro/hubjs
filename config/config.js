@@ -22,6 +22,7 @@ var Processing = require('./../lib/middlewares/processing')
 var Monitor = require('./../lib/middlewares/monitor')
 var Inspector = require('./../lib/middlewares/inspector')
 var Archive = require('./../lib/middlewares/archive')
+var Bulk = require('../lib/middlewares/bulk')
 var UI = require('hubjs-ui')
 
 module.exports = {
@@ -42,6 +43,7 @@ module.exports = {
     { type: Monitor },
     { type: Inspector },
     { type: Archive },
+    { type: Bulk },
     // { type: UI, params: { username: "hub", password: "hub" } }
   ]
 }
