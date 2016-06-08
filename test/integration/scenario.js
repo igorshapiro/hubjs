@@ -224,13 +224,13 @@ class ScenarioBuilder {
       return
     }
 
-    var predicate = this.predicate || () => {
+    var predicate = this.predicate || (() => {
       var expectedRequestsCount = this.receivingOptions.times || 1
       return {
         passed: requests.length === expectedRequestsCount,
         error: `Expected ${expectedRequestsCount}, but got ${requests.length}`
       }
-    }
+    })
 
     var predicateResult = predicate(this)
     // Check simple requests count
