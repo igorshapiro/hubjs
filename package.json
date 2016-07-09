@@ -4,6 +4,8 @@
   "license": "MIT",
   "dependencies": {
     "amqplib": "0.4.1",
+    "aws-promised": "^2.12.0",
+    "aws-sdk": "^2.2.45",
     "bluebird": "3.3.4",
     "bunyan": "1.8.0",
     "co": "4.6.0",
@@ -12,6 +14,7 @@
     "koa": "1.2.0",
     "koa-body": "^1.4.0",
     "koa-router": "^5.4.0",
+    "level": "^1.4.0",
     "lodash": "4.6.1",
     "mongodb": "^2.1.7",
     "newrelic": "1.25.5",
@@ -21,6 +24,7 @@
     "redlock": "^2.0.0",
     "request": "2.69.0",
     "shortid": "2.2.4",
+    "split2": "^2.0.1",
     "string": "^3.3.1"
   },
   "devDependencies": {
