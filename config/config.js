@@ -43,7 +43,7 @@ module.exports = {
     { type: Monitor },
     { type: Inspector },
     { type: Archive },
-    { type: Bulk },
+    { type: Bulk, params: { bufferTimeout: (1).minutes } }
     // { type: UI, params: { username: "hub", password: "hub" } }
   ]
 }
