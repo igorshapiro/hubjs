@@ -5,7 +5,7 @@ var Scenario = require('./scenario')
 
 describe('ServiceHub', function() {
   var hubScenario
-  beforeEach(function() {
+  beforeEach(function*() {
     hubScenario = Scenario()
   })
   afterEach(function*() {

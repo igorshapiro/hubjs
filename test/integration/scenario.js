@@ -33,8 +33,13 @@ class SubscriberBuilder {
   }
 
   buildManifest() {
+    var messageTypeSpec = this.msgType
+    if (this.options.bulk) {
+      messageTypeSpec = `${this.msgType}@${this.options.bulk}`
+    }
+
     var manifest = {
-      subscribes: [this.msgType],
+      subscribes: [messageTypeSpec],
     }
     if (this.options.retrySchedule) {
       manifest.retrySchedule = this.options.retrySchedule
@@ -60,6 +65,7 @@ class ScenarioBuilder {
       this.rejectFunction = reject
     })
     this.requestsMade = []
+    this.messages = []
   }
 
   forHub(options) {
@@ -78,8 +84,8 @@ class ScenarioBuilder {
   }
 
   whenSendingMessage(msg, options) {
-    this.message = msg
-    this.messageOptions = options || {}
+    if (!options) options = {}
+    this.messages.push({msg, options})
     return this
   }
 
@@ -130,18 +136,20 @@ class ScenarioBuilder {
   }
 
   *sendMessages() {
-    if (!this.message) return
+    if (!this.messages) return
 
-    var messagesEndpoint = `${this.hubBase}/api/v1/messages`
-    var times = this.messageOptions.times || 1
-    for (var i = 0; i < times; i++) {
-      var response = yield request.postAsync({
-        url: messagesEndpoint,
-        json: true,
-        body: this.message
-      })
+    for (var m of this.messages) {
+      var messagesEndpoint = `${this.hubBase}/api/v1/messages`
+      var times = m.options.times || 1
+      for (var i = 0; i < times; i++) {
+        var response = yield request.postAsync({
+          url: messagesEndpoint,
+          json: true,
+          body: m.msg
+        })
+      }
+      this.handleAPICallError(messagesEndpoint, response)
     }
-    this.handleAPICallError(messagesEndpoint, response)
   }
 
   handleAPICallError(endpoint, response) {
@@ -266,6 +274,7 @@ class ScenarioBuilder {
     var Recurring = require('./../../lib/middlewares/recurring')
     var Processing = require('./../../lib/middlewares/processing')
     var Archive = require('./../../lib/middlewares/archive')
+    var Bulk = require('./../../lib/middlewares/bulk')
 
     // Used for launching multiple hub instances
     var port = this.basePort + (options.instanceNumber || 0)
@@ -283,7 +292,8 @@ class ScenarioBuilder {
         { type: LockManager },
         { type: Recurring, params: { pollingIntervalMillis: 50 } },
         { type: Processing },
-        { type: Archive }
+        { type: Archive },
+        { type: Bulk }
       ]
     }
   }
@@ -314,6 +324,7 @@ class ScenarioBuilder {
   }
 
   *reset() {
+    this.messages = []
     yield this.hubs.map(_ => _.purge())
     yield this.hubs.map(_ => _.stop())
     this.hubs = []
