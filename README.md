@@ -52,6 +52,16 @@ npm start
 curl -X /api/v1/messages
 ```
 
+# Tests
+
+## Delete all queues
+
+```sh
+/usr/local/Cellar/rabbitmq/3.6.1/sbin/rabbitmqadmin list queues name | \
+  awk '{print $2}' | \
+  xargs -I qn /usr/local/Cellar/rabbitmq/3.6.1/sbin/rabbitmqadmin delete queue name=qn
+```
+
 # Development
 
 Can use node v4+

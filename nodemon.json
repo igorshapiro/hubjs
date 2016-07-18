@@ -1,5 +1,5 @@
 {
   "verbose": false,
-  "ignore": ["test/", "ui/"],
+  "ignore": ["ui/"],
   "watch": [".", "../hubjs-ui"]
 }

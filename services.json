@@ -1,11 +1,12 @@
 {
   "services": {
     "pub": {
-      "publishes": ["load_test", "pricing_changed"],
+      "publishes": ["load_test", "pricing_changed", "bulked_msg"],
       "concurrency": 100
     },
     "sub": {
-      "subscribes": ["load_test", "pricing_changed"],
+      "maintenance": true,
+      "subscribes": ["load_test", "pricing_changed", "bulked_msg@3"],
       "endpoint": "http://localhost:3100/:type",
       "concurrency": 100
     }
