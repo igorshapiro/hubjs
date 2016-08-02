@@ -163,6 +163,7 @@ class ScenarioBuilder {
     const maxRequests = 1e6
     const me = this
     const status = this.subscriber.options.status || 200
+    const headers = this.subscriber.options.headers || {}
     var sub = this.subscriber
     var req = nock(this.subscriber.baseUrl)
       .filteringRequestBody((body) => {
@@ -171,13 +172,13 @@ class ScenarioBuilder {
       })
       .post(this.receivingPath)
       .times(maxRequests)
-      .reply(status, function(uri, req, cb) {
+      .reply(status, (uri, req, cb) => {
         if (me.subscriber.responseTaking) {
           setTimeout(function() {
-            cb(null, [status, "Delayed response"])
+            cb(null, [status, "Delayed response", headers])
           }, me.subscriber.responseTaking)
         }
-        else cb(null, [status, "Response"])
+        else cb(null, [status, "Response", headers])
       })
       .log(_ => log.debug(_))
   }

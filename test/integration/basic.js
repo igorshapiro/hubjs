@@ -31,6 +31,17 @@ describe('ServiceHub', function() {
       .run()
   })
 
+  it ("Reschedule message", function*() {
+    yield hubScenario.forHub()
+      .withSubscriber('rescheduleTestMsg', {
+        headers: { 'Retry-After': 1 }, status: 302
+      }).at('/handlers/:type')
+      .whenSendingMessage({type: 'rescheduleTestMsg'})
+      .itIsReceivedAt('/handlers/rescheduleTestMsg', { times: 2 })
+      .withinSchedule(0, 1000)
+      .run()
+  })
+
   describe ("Recurring messages", function() {
     it ("Schedules message every specified time", function*() {
       yield hubScenario.forHub()
