@@ -1,14 +1,18 @@
 {
+  "defaults": {
+    "intermediate": "redis://redis",
+    "queue": "rabbitmq://rabbitmq",
+    "storage": "mongo://mongo/hubjs",
+    "concurrency": 100
+  },
   "services": {
     "pub": {
-      "publishes": ["load_test", "pricing_changed", "bulked_msg"],
-      "concurrency": 100
+      "publishes": ["load_test", "pricing_changed", "bulked_msg"]
     },
     "sub": {
       "maintenance": true,
       "subscribes": ["load_test", "pricing_changed", "bulked_msg@3"],
-      "endpoint": "http://localhost:3100/:type",
-      "concurrency": 100
+      "endpoint": "http://localhost:3100/:type"
     }
   }
 }
