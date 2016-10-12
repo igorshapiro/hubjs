@@ -46,11 +46,56 @@ npm start
 
 ## API
 
+### Message format
+
+```js
+{
+  "messageId": "...",           // Assigned by the hub when publishing a message
+  "type": "order_changed",      // Specifies type of the message
+  "content": {
+    ...
+  }
+}
+```
+
+When a message is published a `messageId` is assigned to it. When published the
+message is stored in an `outgoing` queue, and then is copied to the `input`
+queues of all subscribers.
+
 ### Publishing a message
 
 ```sh
-curl -X /api/v1/messages
+POST /api/v1/messages
+{
+  "type": "order_changed",
+  "content": {
+    "orderId": "123"
+  }
+}
 ```
+
+### Subscribing to a message
+
+All message subscribers are defined in the `services.json` file deployed with the hub.
+
+*Example:* for the following `services.json`
+
+```json
+{
+  "services": {
+    "warehouse": {
+      "subscribes": ["order_changed"],
+      "endpoint": ["http://warehouse.company.com/handlers/:type"]
+    }
+  }
+}
+```
+
+`order_changed` message will be delivered via HTTP POST to `http://warehouse.company.com/handlers/order_changed`.
+
+`Note:` SH uses a `keep-alive` connection to subscribers.
+
+Whenever a message arrives it is delivered to the subscriber.
 
 # Tests
 
