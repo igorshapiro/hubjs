@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/igorshapiro/hubjs/badges/gpa.svg)](https://codeclimate.com/github/igorshapiro/hubjs)
+
 ## Usage
 
 ### Deployment
