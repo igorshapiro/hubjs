@@ -2,5 +2,6 @@
   "verbose": false,
   "ignore": ["ui/"],
   "watch": [".", "../hubjs-ui"],
-  "ext": "js json"
+  "ext": "js json",
+  "exec": "npm test"
 }

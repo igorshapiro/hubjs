@@ -1,6 +1,3 @@
-"use strict"
-
-var Bluebird = require('bluebird')
 var Scenario = require('./scenario')
 
 describe('ServiceHub', function() {
@@ -12,7 +9,7 @@ describe('ServiceHub', function() {
     yield hubScenario.reset()
   })
 
-  it ("Delivers message to service", function*() {
+  it('Delivers message to service', function*() {
     yield hubScenario.forHub()
       .withSubscriber('deliveryTestMsg').at('/handlers/:type')
       .whenSendingMessage({type: 'deliveryTestMsg'})
@@ -20,7 +17,7 @@ describe('ServiceHub', function() {
       .run()
   })
 
-  it ("Retries message delivery on failure", function*() {
+  it('Retries message delivery on failure', function*() {
     yield hubScenario.forHub()
       .withSubscriber('scheduleTestMsg', {
         status: 500, retrySchedule: [100, 200, 300]
@@ -31,7 +28,7 @@ describe('ServiceHub', function() {
       .run()
   })
 
-  it ("Reschedule message", function*() {
+  it('Reschedule message', function*() {
     yield hubScenario.forHub()
       .withSubscriber('rescheduleTestMsg', {
         headers: { 'Retry-After': 1 }, status: 302
@@ -42,8 +39,8 @@ describe('ServiceHub', function() {
       .run()
   })
 
-  describe ("Recurring messages", function() {
-    it ("Schedules message every specified time", function*() {
+  describe('Recurring messages', function() {
+    it('Schedules message every specified time', function*() {
       yield hubScenario.forHub()
         .withSubscriber('recurringMsg', { status: 200 }).at('/handlers/:type')
         .whenRegisteringRecurringMessage({
@@ -57,8 +54,8 @@ describe('ServiceHub', function() {
     })
   })
 
-  describe ("Concurrent messages", function() {
-    it ("Sends up-to concurrency messages", function*() {
+  describe('Concurrent messages', function() {
+    it('Sends up-to concurrency messages', function*() {
       yield hubScenario.forHub()
         .withSubscriber('concurrencyTestMsg')
           .withConcurrency(5)
@@ -70,7 +67,7 @@ describe('ServiceHub', function() {
         .run()
     })
 
-    it ("Sends up-to concurrency, even from multiple hub processes", function*() {
+    it('Sends up-to concurrency, even from multiple hub processes', function*() {
       yield hubScenario.forHub({ instances: 2 })
         .withSubscriber('distributedConcurrencyTestMsg')
           .withConcurrency(6)

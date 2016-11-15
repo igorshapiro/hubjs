@@ -1,6 +1,7 @@
 require('./../config/init')
 
-global.chai = require('chai')
+let chai = require('chai')
+global.chai = chai
 global.sinon = require('sinon')
 var sinonChai = require('sinon-chai')
 global.expect = chai.expect

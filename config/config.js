@@ -1,9 +1,7 @@
-"use strict"
-
 require('newrelic')
 var Bluebird = require('bluebird')
 Bluebird.config({
-  longStackTraces: true,
+  longStackTraces: true
   // warnings: true
 })
 var WebServer = require('./../lib/middlewares/web_server')
@@ -23,7 +21,7 @@ var Monitor = require('./../lib/middlewares/monitor')
 var Inspector = require('./../lib/middlewares/inspector')
 var Archive = require('./../lib/middlewares/archive')
 var Bulk = require('../lib/middlewares/bulk')
-var UI = require('hubjs-ui')
+// var UI = require('hubjs-ui')
 
 module.exports = {
   middlewares: [
