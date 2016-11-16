@@ -93,29 +93,29 @@ describe('Archive', function() {
     describe('collection.insert', function() {
       beforeEach(function*() {
         yield archive.initialize()
-        archive.collection.insert = sinon.spy()
+        archive.collection.insertOne = sinon.stub().returns(Promise.resolve())
       })
 
       it('is called for the message', function*() {
         archive.logAcceptedMessage({msg: {a: 1}})
         archive.logAcceptedMessage({msg: {attemptsMade: 0}})
-        expect(archive.collection.insert).to.have.been.calledWithMatch({a: 1})
-        expect(archive.collection.insert).to.have.been.calledWithMatch({attemptsMade: 0})
+        expect(archive.collection.insertOne).to.have.been.calledWithMatch({a: 1})
+        expect(archive.collection.insertOne).to.have.been.calledWithMatch({attemptsMade: 0})
       })
 
       it('not called if msg has recurringMessageId', function*() {
         archive.logAcceptedMessage({msg: {recurringMessageId: 123}})
-        expect(archive.collection.insert).to.not.have.been.called
+        expect(archive.collection.insertOne).to.not.have.been.called
       })
 
       it('not called if msg has archivedAt', function*() {
         archive.logAcceptedMessage({msg: {archivedAt: 123}})
-        expect(archive.collection.insert).to.not.have.been.called
+        expect(archive.collection.insertOne).to.not.have.been.called
       })
 
       it('not called if msg is a retry', function*() {
         archive.logAcceptedMessage({msg: {attemptsMade: 1}})
-        expect(archive.collection.insert).to.not.have.been.called
+        expect(archive.collection.insertOne).to.not.have.been.called
       })
     })
   })
