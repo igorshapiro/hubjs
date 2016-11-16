@@ -1,5 +1,3 @@
-'use strict'
-
 var Scenario = require('./scenario')
 var shortid = require('shortid')
 
@@ -14,7 +12,7 @@ describe('Bulk', function() {
     yield hubScenario.reset()
   })
 
-  it ('Delivers bulk messages to server', function*() {
+  it('Delivers bulk messages to server', function*() {
     yield hubScenario.forHub()
       .withSubscriber(msgName, {bulk: 2}).at('/handlers/:type')
       .whenSendingMessage({type: msgName})

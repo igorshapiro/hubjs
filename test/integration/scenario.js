@@ -1,5 +1,3 @@
-"use strict"
-
 require('./../../config/init')
 var shortid = require('shortid')
 var Hub = require('./../../lib/hub/hub')
@@ -12,7 +10,7 @@ Bluebird.promisifyAll(request)
 
 class SubscriberBuilder {
   constructor(scenario, msgType, options) {
-    this.baseUrl = "http://localhost"
+    this.baseUrl = 'http://localhost'
     this.scenario = scenario
     this.msgType = msgType
     this.options = options || {}
@@ -39,7 +37,7 @@ class SubscriberBuilder {
     }
 
     var manifest = {
-      subscribes: [messageTypeSpec],
+      subscribes: [messageTypeSpec]
     }
     if (this.options.retrySchedule) {
       manifest.retrySchedule = this.options.retrySchedule
@@ -154,9 +152,10 @@ class ScenarioBuilder {
 
   handleAPICallError(endpoint, response) {
     var status = response.statusCode
-    if (status !== 201) throw new Error(
-      `POST ${endpoint} responded with ${status}:\r\n${response.body}`
-    )
+    if (status !== 201) {
+      let msg = `POST ${endpoint} responded with ${status}:\r\n${response.body}`
+      throw new Error(msg)
+    }
   }
 
   *setupMocks() {
@@ -164,8 +163,7 @@ class ScenarioBuilder {
     const me = this
     const status = this.subscriber.options.status || 200
     const headers = this.subscriber.options.headers || {}
-    var sub = this.subscriber
-    var req = nock(this.subscriber.baseUrl)
+    nock(this.subscriber.baseUrl)
       .filteringRequestBody((body) => {
         this.requestsMade.push({ body: body, ts: Date.now() })
         return body
@@ -175,10 +173,9 @@ class ScenarioBuilder {
       .reply(status, (uri, req, cb) => {
         if (me.subscriber.responseTaking) {
           setTimeout(function() {
-            cb(null, [status, "Delayed response", headers])
+            cb(null, [status, 'Delayed response', headers])
           }, me.subscriber.responseTaking)
-        }
-        else cb(null, [status, "Response", headers])
+        } else cb(null, [status, 'Response', headers])
       })
       .log(_ => log.debug(_))
   }
@@ -193,20 +190,18 @@ class ScenarioBuilder {
 
     // Check schedule
     if (schedule && schedule.length) {
-      var threshold = 200, warmup = 200
+      let threshold = 200
+      let warmup = 200
       if (requests.length !== schedule.length) {
         if (this.afterMillis) {
           this.rejectFunction(new Error(`Expected ${schedule.length} requests, but received ${requests.length}`))
-        }
-        else {
-          return
-        }
+        } else return
       }
       var scheduleRanges = schedule.reduce((acc, delay, index) => {
         var last = acc[acc.length - 1]
-        var range = last
-          ? [this.testStartTS + delay, this.testStartTS + delay + threshold * index]
-          : [this.testStartTS, this.testStartTS + delay + warmup]
+        var range = last ?
+          [this.testStartTS + delay, this.testStartTS + delay + threshold * index] :
+          [this.testStartTS, this.testStartTS + delay + warmup]
         acc.push(range)
         return acc
       }, [])
@@ -217,12 +212,14 @@ class ScenarioBuilder {
         if (!fallsInRange) {
           log.error({
             scheduleRanges: scheduleRanges.map(r => ({
-              from: r[0], to: r[1],
-              delta: r[1] - r[0], fromStart: r[0] - this.testStartTS
+              from: r[0],
+              to: r[1],
+              delta: r[1] - r[0],
+              fromStart: r[0] - this.testStartTS
             })),
             requests: requests.map(r => ({ ts: r.ts, fromStart: r.ts - this.testStartTS })),
             startTS: this.testStartTS
-          }, "Invalid request ranges")
+          }, 'Invalid request ranges')
           this.rejectFunction(
             `#${i} ${requestTS} doesn't fall in [${range[0]}..${range[1]}]`
           )
@@ -246,12 +243,10 @@ class ScenarioBuilder {
     if (this.afterMillis) {
       if (predicateResult.passed) {
         this.resolveFunction()
-      }
-      else {
+      } else {
         this.rejectFunction(new Error(predicateResult.error))
       }
-    }
-    else if (predicateResult.passed) {
+    } else if (predicateResult.passed) {
       this.resolveFunction()
     }
   }
@@ -306,7 +301,7 @@ class ScenarioBuilder {
 
   *run(options) {
     var manifest = this.buildManifest()
-    log.debug({ manifest: manifest }, "Manifest generated")
+    log.debug({ manifest: manifest }, 'Manifest generated')
     var numInstances = this.options.instances || 1
     this.hubs = []
     for (var i = 0; i < numInstances; i++) {
@@ -329,8 +324,9 @@ class ScenarioBuilder {
     yield this.hubs.map(_ => _.purge())
     yield this.hubs.map(_ => _.stop())
     this.hubs = []
-    if (this.checkAssertionsInterval)
+    if (this.checkAssertionsInterval) {
       clearInterval(this.checkAssertionsInterval)
+    }
   }
 }
 

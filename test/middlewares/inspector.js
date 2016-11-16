@@ -1,12 +1,9 @@
-"use strict"
-
 var shortid = require('shortid')
 var Inspector = require('./../../lib/middlewares/inspector')
 var Hub = require('./../../lib/hub/hub')
-var bluebird = require('bluebird')
 const EventEmitter = require('events')
 
-describe("Inspector", function() {
+describe('Inspector', function() {
   var service, inspector
   var hub = new Hub({manifest: {}})
 
@@ -19,18 +16,18 @@ describe("Inspector", function() {
     })
   })
 
-  describe("Handle", function() {
-    it ("matchers", function() {
+  describe('Handle', function() {
+    it('matchers', function() {
       var msg = {type: 'done', num: 4}
-      inspector.setMatchers(["ctx.type === 'done' && ctx.num < 10"])
+      inspector.setMatchers(['ctx.type === \'done\' && ctx.num < 10'])
       inspector.logEvent = sinon.spy()
       inspector.handle('some_type', msg)
 
       expect(inspector.logEvent).to.have.been.calledWith('some_type', msg)
     })
 
-    it ("doesn't match", function() {
-      inspector.setMatchers(["ctx.type === 'done'"])
+    it('does not match', function() {
+      inspector.setMatchers(['ctx.type === \'done\''])
       inspector.logEvent = sinon.spy()
       inspector.handle('some_type', {type: 'not_done'})
 
@@ -38,7 +35,7 @@ describe("Inspector", function() {
     })
   })
 
-  describe("Subscription", function() {
+  describe('Subscription', function() {
     function testSubscription(middleware, msgType, name) {
       return function*() {
         var emitter = new EventEmitter()
@@ -56,15 +53,15 @@ describe("Inspector", function() {
     }
 
     var eventTypes = [
-      { mw: "delivery", name: "delivery", type: "delivered" },
-      { mw: "dead_letter", name: "deadLetter", type: "killed" },
-      { mw: "scheduler", name: "scheduler", type: "scheduled" },
-      { mw: "scheduler", name: "scheduler", type: "enqueued" },
-      { mw: "api", name: "api", type: "accepted" },
+      { mw: 'delivery', name: 'delivery', type: 'delivered' },
+      { mw: 'dead_letter', name: 'deadLetter', type: 'killed' },
+      { mw: 'scheduler', name: 'scheduler', type: 'scheduled' },
+      { mw: 'scheduler', name: 'scheduler', type: 'enqueued' },
+      { mw: 'api', name: 'api', type: 'accepted' }
     ]
 
     for (var eventType of eventTypes) {
-      it (`Subscribes to ${eventType.mw}.${eventType.type}`,
+      it(`Subscribes to ${eventType.mw}.${eventType.type}`,
         testSubscription(eventType.mw, eventType.type, eventType.name)
       )
     }

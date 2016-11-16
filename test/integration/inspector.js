@@ -1,9 +1,6 @@
-"use strict"
-
-var Bluebird = require('bluebird')
 var Scenario = require('./scenario')
 
-describe ("Inspector", function() {
+describe('Inspector', function() {
   var hubScenario
   beforeEach(function() {
     hubScenario = Scenario()
@@ -12,7 +9,7 @@ describe ("Inspector", function() {
     yield hubScenario.reset()
   })
 
-  it ("Records all events", function*() {
+  it('Records all events', function*() {
     yield hubScenario.forHub()
       .withSubscriber('scheduleTestMsg', {
         status: 500, retrySchedule: [100]
@@ -20,7 +17,7 @@ describe ("Inspector", function() {
       .whenSendingMessage({type: 'scheduleTestMsg', maxAttempts: 3})
       .itIsReceivedAt('/handlers/scheduleTestMsg', {times: 5})
       .withPredicate(function(scenario) {
-        return { passed: true, error: "Something failed" }
+        return { passed: true, error: 'Something failed' }
       })
       .after(500)
       .run()
