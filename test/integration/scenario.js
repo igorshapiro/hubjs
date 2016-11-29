@@ -59,8 +59,8 @@ class ScenarioBuilder {
     this.hubBase = `http://localhost:${this.basePort}`
     this.hubs = []
     this.testPromise = new Promise((resolve, reject) => {
-      this.resolveFunction = resolve
-      this.rejectFunction = reject
+      this.resolveFunction = (...args) => this.stopAssertionPolling(resolve, ...args)
+      this.rejectFunction = (...args) => this.stopAssertionPolling(reject, ...args)
     })
     this.requestsMade = []
     this.messages = []
@@ -319,14 +319,20 @@ class ScenarioBuilder {
     return yield this.runTests()
   }
 
+  stopAssertionPolling(callback, ...args) {
+    if (!this.checkAssertionsInterval) return
+
+    clearInterval(this.checkAssertionsInterval)
+    this.checkAssertionsInterval = null
+    if (callback) callback(...args)
+  }
+
   *reset() {
+    this.stopAssertionPolling()
     this.messages = []
     yield this.hubs.map(_ => _.purge())
     yield this.hubs.map(_ => _.stop())
     this.hubs = []
-    if (this.checkAssertionsInterval) {
-      clearInterval(this.checkAssertionsInterval)
-    }
   }
 }
 
