@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  build:
+    working_directory: /tmp/hubjs
+    docker:
+      - image: circleci/node:8.1.2
+      - image: redis@sha256:54057dd7e125ca41afe526a877e8bd35ec2cdd33b9217e022ed37bdcf7d09673
+      - image: mongo:3.4
+      - image: rabbitmq:3.6
+    steps:
+      - checkout
+      - restore_cache:
+          key: hubjs-{{ checksum "package.json" }}-{{ checksum "examples/app/package.json" }}
+      - run: npm install
+      - run: sleep 10 && npm test
+      - save_cache:
+          key: hubjs-{{ checksum "package.json" }}-{{ checksum "examples/app/package.json" }}
+          paths:
+            - node_modules
+            - examples/app/node_modules
+      - store_artifacts:
+          path: /tmp/hubjs/coverage/lcov-report
+          destination: coverage
